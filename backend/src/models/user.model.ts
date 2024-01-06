@@ -33,8 +33,7 @@ export default class UserModel extends BaseModel {
         password: "password",
       })
       .from("users")
-      .where({ email })
-      .first();
+      .where({ email });
 
     return user?.[0];
   }
