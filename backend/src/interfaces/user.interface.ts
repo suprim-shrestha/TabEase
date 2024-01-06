@@ -7,4 +7,6 @@ export interface IUser {
 
 export interface ICreateUser extends Omit<IUser, "id"> {}
 
-export interface IUpdateUser extends Partial<IUser> {}
+export interface IUpdateUser extends Partial<IUser> {
+  updatedAt: Date;
+}

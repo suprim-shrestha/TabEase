@@ -36,7 +36,7 @@ export async function updateUser(
 ) {
   try {
     const id = req.params.id;
-    const userDetails: IUpdateUser = req.body;
+    const userDetails: IUpdateUser = { ...req.body, updatedAt: new Date() };
 
     const data = await userService.updateUser(parseInt(id), userDetails);
 
