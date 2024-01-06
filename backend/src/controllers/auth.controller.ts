@@ -18,10 +18,23 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   const { body } = req;
 
   try {
-    const data = await authService.login(body);
+    const result = await authService.login(body);
 
-    return res.status(201).json(data);
+    res.cookie("accessToken", result.accessToken, {
+      httpOnly: true,
+      signed: true,
+    });
+
+    return res.status(201).json(result);
   } catch (error) {
     next(error);
   }
+}
+
+export async function logout(_req: Request, res: Response) {
+  res.clearCookie("accessToken");
+
+  return res.json({
+    message: "User logged out successfully",
+  });
 }

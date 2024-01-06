@@ -34,8 +34,6 @@ export async function signup(userDetails: ISignUp) {
 
 export async function login(body: ILogin) {
   const userDetail = await UserModel.getUserByEmail(body.email);
-  console.log("by email", userDetail);
-  console.log("by id", await UserModel.getUserById(userDetail.id));
 
   if (!userDetail) {
     throw new NotFoundException("User Not Found");

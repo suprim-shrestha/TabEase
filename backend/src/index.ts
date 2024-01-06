@@ -1,5 +1,7 @@
 import express from "express";
 
+import cookieParser from "cookie-parser";
+
 import config from "./config";
 import routes from "./routes";
 
@@ -9,6 +11,8 @@ import {
 } from "./middlewares/errorHandler.middleware";
 
 const app = express();
+
+app.use(cookieParser(config.cookieSecret));
 
 app.use(express.json());
 
