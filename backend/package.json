@@ -9,7 +9,9 @@
     "migrate": "knex --knexfile=src/knexFile.ts migrate:latest --verbose",
     "rollback": "knex --knexfile=src/knexFile.ts migrate:rollback --verbose",
     "seed": "knex --knexfile=src/knexFile.ts seed:run --verbose",
-    "make:seeder": "knex --knexfile=src/knexFile.ts seed:make -x ts --env development"
+    "make:seeder": "knex --knexfile=src/knexFile.ts seed:make -x ts --env development",
+    "lint": "eslint --ext .ts src",
+    "lint:fix": "eslint --fix --ext .ts src"
   },
   "author": "Suprim Shrestha <suprim.shresth@gmail.com>",
   "license": "ISC",
