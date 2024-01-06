@@ -1,6 +1,9 @@
+import bcrypt from "bcrypt";
+
 import { NotFoundException } from "../exceptions";
 import { IUpdateUser } from "../interfaces/user.interface";
 import UserModel from "../models/user.model";
+import config from "../config";
 
 export async function getUsers() {
   return await UserModel.getUsers();
@@ -21,6 +24,13 @@ export async function updateUser(id: number, userDetails: IUpdateUser) {
 
   if (!user) {
     throw new NotFoundException("User Not Found");
+  }
+
+  if (userDetails.password) {
+    userDetails.password = await bcrypt.hash(
+      userDetails.password,
+      config.saltRounds
+    );
   }
 
   await UserModel.updateUser(id, userDetails);
