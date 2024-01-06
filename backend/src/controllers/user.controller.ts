@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import * as userService from "../services/user.service";
 import { IUpdateUser } from "../interfaces/user.interface";
+import { JwtPayload } from "../interfaces/jwt.interface";
 
 export async function getUsers(_req: Request, res: Response) {
   const data = await userService.getUsers();
@@ -9,6 +10,23 @@ export async function getUsers(_req: Request, res: Response) {
   return res.json({
     data,
   });
+}
+
+export async function getCurrentUser(
+  req: Request & { user?: JwtPayload },
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const user = req.user;
+
+    if (user) {
+      const data = await userService.getUserById(user.id);
+      return res.json({ data });
+    }
+  } catch (error) {
+    next(error);
+  }
 }
 
 export async function getUserById(
