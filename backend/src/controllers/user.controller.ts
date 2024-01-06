@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import * as userService from "../services/user.service";
+import { IUpdateUser } from "../interfaces/user.interface";
 
 export async function getUsers(_req: Request, res: Response) {
   const data = await userService.getUsers();
@@ -35,9 +36,9 @@ export async function updateUser(
 ) {
   try {
     const id = req.params.id;
-    const { body } = req;
+    const userDetails: IUpdateUser = req.body;
 
-    const data = await userService.updateUser(parseInt(id), body);
+    const data = await userService.updateUser(parseInt(id), userDetails);
 
     return res.json({
       data,
@@ -55,10 +56,10 @@ export async function deleteUser(
   try {
     const id = req.params.id;
 
-    const data = await userService.deleteUser(parseInt(id));
+    await userService.deleteUser(parseInt(id));
 
     return res.json({
-      data,
+      message: "User deleted successfully",
     });
   } catch (error) {
     next(error);
