@@ -41,7 +41,7 @@ export async function updateGroup(
 }
 
 export async function deleteGroup(id: number, userId: number) {
-  const group = GroupModel.getGroupById(id, userId);
+  const group = await GroupModel.getGroupById(id, userId);
 
   if (!group) {
     throw new NotFoundException(`Group with id ${id} Not Found`);

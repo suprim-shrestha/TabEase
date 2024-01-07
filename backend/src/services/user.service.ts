@@ -41,7 +41,7 @@ export async function updateUser(id: number, userDetails: IUpdateUser) {
 }
 
 export async function deleteUser(id: number) {
-  const user = UserModel.getUserById(id);
+  const user = await UserModel.getUserById(id);
 
   if (!user) {
     throw new NotFoundException("User Not Found");
