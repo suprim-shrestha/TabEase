@@ -1,6 +1,6 @@
 import { Knex } from "knex";
 
-const TABLE_NAME = "table_name";
+const TABLE_NAME = "links";
 
 /**
  * Create table TABLE_NAME.
@@ -21,7 +21,8 @@ export async function up(knex: Knex): Promise<void> {
       .unsigned()
       .notNullable()
       .references("id")
-      .inTable("groups");
+      .inTable("groups")
+      .onDelete("CASCADE");
 
     table.timestamp("created_at").notNullable().defaultTo(knex.raw("now()"));
 
