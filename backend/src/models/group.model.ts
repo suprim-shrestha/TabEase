@@ -11,7 +11,8 @@ export default class GroupModel extends BaseModel {
         createdBy: "created_by",
       })
       .from("groups")
-      .where({ createdBy: userId });
+      .where({ createdBy: userId })
+      .orderBy("created_at");
   }
 
   static async getGroupById(id: number, userId: number) {
