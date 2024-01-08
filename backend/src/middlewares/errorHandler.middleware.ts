@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { HttpException } from "../exceptions";
 
+import loggerWithNameSpace from "../utils/logger";
+
+const logger = loggerWithNameSpace("ErrorHandler");
+
 /**
  * Error handler middleware
  *
@@ -15,7 +19,11 @@ export async function errorHandler(
   res: Response,
   next: NextFunction
 ) {
-  const { statusCode, message } = error;
+  const { statusCode, message, stack } = error;
+
+  if (stack) {
+    logger.error(stack);
+  }
 
   if (res.headersSent) {
     return next(error);
