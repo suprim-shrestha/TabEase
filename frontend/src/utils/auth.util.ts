@@ -28,3 +28,14 @@ export async function signup(user: ISignUp) {
     console.log(error);
   }
 }
+
+export async function logout() {
+  try {
+    const response = await http.post("/auth/logout");
+
+    console.log(response);
+    window.location.href = "/";
+  } catch (error) {
+    console.log(error);
+  }
+}
