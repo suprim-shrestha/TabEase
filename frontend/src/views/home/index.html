@@ -10,7 +10,28 @@
     <h1>Logged In</h1>
     <button id="logout-btn">Log out</button>
     <div class="groups" id="groups"></div>
+    <form id="add-group">
+      <input
+        type="text"
+        id="groupName"
+        name="groupName"
+        placeholder="Add Group"
+      />
+      <button type="submit" id="add-group-btn">Add group</button>
+    </form>
     <div class="links" id="links"></div>
+    <div class="add-link">
+      <form id="add-link-form">
+        <input
+          type="text"
+          id="linkTitle"
+          name="linkTitle"
+          placeholder="Link Title"
+        />
+        <input type="text" id="url" name="url" placeholder="Link Url" />
+        <button type="submit">Add Link</button>
+      </form>
+    </div>
 
     <script type="module" src="./script.ts"></script>
   </body>
