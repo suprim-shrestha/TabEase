@@ -28,7 +28,7 @@ export default class GroupModel extends BaseModel {
   }
 
   static async createGroup(group: ICreateGroup) {
-    return this.queryBuilder().insert(group).table("groups");
+    return this.queryBuilder().returning("id").insert(group).table("groups");
   }
 
   static async updateGroup(id: number, group: IUpdateGroup) {

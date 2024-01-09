@@ -3,7 +3,9 @@ import { ICreateGroup, IUpdateGroup } from "../interfaces/group.interface";
 import GroupModel from "../models/group.model";
 
 export async function createGroup(newGroup: ICreateGroup) {
-  return GroupModel.createGroup(newGroup);
+  const data = await GroupModel.createGroup(newGroup);
+
+  return data[0];
 }
 
 export async function getGroups(userId: number) {

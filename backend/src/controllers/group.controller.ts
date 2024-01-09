@@ -18,10 +18,11 @@ export async function createGroup(
       createdBy: user.id,
     };
 
-    await groupService.createGroup(newGroup);
+    const data = await groupService.createGroup(newGroup);
 
     res.json({
       message: "Group created successfully",
+      data,
     });
   } catch (error) {
     next(error);
