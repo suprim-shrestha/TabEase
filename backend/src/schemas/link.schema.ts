@@ -1,5 +1,12 @@
 import Joi from "joi";
 
+export const linkQuerySchema = Joi.object({
+  groupId: Joi.number().required().messages({
+    "any.required": "Group id is required",
+    "number.empty": "Group id cannot be empty",
+  }),
+});
+
 export const createLinkSchema = Joi.object({
   title: Joi.string().required().min(3).max(30).messages({
     "any.required": "Title is required",
@@ -14,10 +21,6 @@ export const createLinkSchema = Joi.object({
       "any.required": "url is required",
       "string.empty": "url cannot be empty",
     }),
-  groupId: Joi.number().required().messages({
-    "any.required": "Group id is required",
-    "number.empty": "Group id cannot be empty",
-  }),
 });
 
 export const updateLinkSchema = Joi.object({
@@ -31,15 +34,4 @@ export const updateLinkSchema = Joi.object({
     .messages({
       "string.empty": "url cannot be empty",
     }),
-  groupId: Joi.number().required().messages({
-    "any.required": "Group id is required",
-    "number.empty": "Group id cannot be empty",
-  }),
-});
-
-export const linkSchema = Joi.object({
-  groupId: Joi.number().required().messages({
-    "any.required": "Group id is required",
-    "number.empty": "Group id cannot be empty",
-  }),
 });

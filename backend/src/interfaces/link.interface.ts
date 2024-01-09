@@ -10,3 +10,7 @@ export interface ICreateLink extends Omit<ILink, "id"> {}
 export interface IUpdateLink extends Partial<ILink> {
   updatedAt: Date;
 }
+
+export interface ILinkQuery {
+  groupId: number;
+}

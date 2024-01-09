@@ -8,23 +8,36 @@ import {
   updateLink,
 } from "../controllers/link.controller";
 
-import { validateReqBody } from "../middlewares/validator.middleware";
+import {
+  validateReqBody,
+  validateReqQuery,
+} from "../middlewares/validator.middleware";
 import {
   createLinkSchema,
-  linkSchema,
+  linkQuerySchema,
   updateLinkSchema,
 } from "../schemas/link.schema";
 
 const router = Router();
 
-router.post("/", validateReqBody(createLinkSchema), createLink);
+router.post(
+  "/",
+  validateReqQuery(linkQuerySchema),
+  validateReqBody(createLinkSchema),
+  createLink
+);
 
-router.get("/", validateReqBody(linkSchema), getLinks);
+router.get("/", validateReqQuery(linkQuerySchema), getLinks);
 
-router.get("/:id", validateReqBody(linkSchema), getLinkById);
+router.get("/:id", validateReqQuery(linkQuerySchema), getLinkById);
 
-router.put("/:id", validateReqBody(updateLinkSchema), updateLink);
+router.put(
+  "/:id",
+  validateReqQuery(linkQuerySchema),
+  validateReqBody(updateLinkSchema),
+  updateLink
+);
 
-router.delete("/:id", validateReqBody(linkSchema), deleteLink);
+router.delete("/:id", validateReqQuery(linkQuerySchema), deleteLink);
 
 export default router;

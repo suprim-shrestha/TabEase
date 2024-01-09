@@ -2,7 +2,11 @@ import { NextFunction, Request, Response } from "express";
 
 import { JwtPayload } from "../interfaces/jwt.interface";
 import * as linkService from "../services/link.service";
-import { ICreateLink, IUpdateLink } from "../interfaces/link.interface";
+import {
+  ICreateLink,
+  ILinkQuery,
+  IUpdateLink,
+} from "../interfaces/link.interface";
 import { getGroupById } from "../services/group.service";
 
 export async function createLink(
@@ -12,7 +16,8 @@ export async function createLink(
 ) {
   try {
     const user = req.user!;
-    const { title, url, groupId } = req.body;
+    const { title, url } = req.body;
+    const { groupId } = req.query as unknown as ILinkQuery;
 
     await getGroupById(groupId, user.id);
 
@@ -39,7 +44,7 @@ export async function getLinks(
 ) {
   try {
     const user = req.user!;
-    const { groupId } = req.body;
+    const { groupId } = req.query as unknown as ILinkQuery;
 
     await getGroupById(groupId, user.id);
 
@@ -59,7 +64,7 @@ export async function getLinkById(
   try {
     const user = req.user!;
     const { id } = req.params;
-    const { groupId } = req.body;
+    const { groupId } = req.query as unknown as ILinkQuery;
 
     await getGroupById(groupId, user.id);
 
@@ -79,7 +84,7 @@ export async function updateLink(
   try {
     const user = req.user!;
     const { id } = req.params;
-    const { groupId } = req.body;
+    const { groupId } = req.query as unknown as ILinkQuery;
 
     await getGroupById(groupId, user.id);
 
@@ -111,7 +116,7 @@ export async function deleteLink(
   try {
     const user = req.user!;
     const { id } = req.params;
-    const { groupId } = req.body;
+    const { groupId } = req.query as unknown as ILinkQuery;
 
     await getGroupById(groupId, user.id);
 
