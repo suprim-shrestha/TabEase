@@ -1,4 +1,5 @@
 import { http } from "../../../utils/api.util";
+import { login } from "../../../utils/auth.util";
 
 try {
   await http.get("/users/me");
@@ -8,24 +9,13 @@ try {
 
 const loginForm = document.getElementById("login-form") as HTMLFormElement;
 
-loginForm.addEventListener("submit", async (e) => {
+loginForm.addEventListener("submit", async (e) => handleLogin(e));
+
+async function handleLogin(e: Event) {
   e.preventDefault();
 
   const email = loginForm.email.value;
   const password = loginForm.password.value;
 
   await login({ email, password });
-
-  return;
-});
-
-async function login(user: { email: string; password: string }) {
-  try {
-    const response = await http.post("/auth/login", user);
-
-    console.log(response);
-    window.location.href = "/";
-  } catch (error) {
-    console.log(error);
-  }
 }
