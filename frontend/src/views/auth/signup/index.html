@@ -4,18 +4,68 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign Up</title>
+    <link rel="stylesheet" href="./../../../styles/style.scss" />
   </head>
   <body>
-    <h1>Sign Up</h1>
-    <form id="signup-form">
-      <label for="username"> Username </label>
-      <input type="text" name="username" id="username" />
-      <label for="email"> Email </label>
-      <input type="email" name="email" id="email" />
-      <label for="password">Password</label>
-      <input type="password" name="password" id="password" />
-      <button type="submit">Sign Up</button>
-    </form>
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card p-5">
+            <h1 class="text-center">Sign Up</h1>
+            <form id="signup-form" class="row g-4">
+              <div class="">
+                <label class="form-label" for="username"> Username </label>
+                <input
+                  class="form-control"
+                  type="text"
+                  name="username"
+                  id="username"
+                />
+                <div class="invalid-feedback" id="username-feedback"></div>
+              </div>
+              <div class="">
+                <label class="form-label" for="email"> Email </label>
+                <input
+                  class="form-control"
+                  type="text"
+                  name="email"
+                  id="email"
+                />
+                <div class="invalid-feedback" id="email-feedback"></div>
+              </div>
+              <div class="">
+                <label class="form-label" for="password">Password</label>
+                <input
+                  class="form-control"
+                  type="password"
+                  name="password"
+                  id="password"
+                />
+                <div class="invalid-feedback" id="password-feedback"></div>
+              </div>
+              <div class="">
+                <label class="form-label" for="confirmPassword"
+                  >Confirm Password</label
+                >
+                <input
+                  class="form-control"
+                  type="password"
+                  name="confirmPassword"
+                  id="confirmPassword"
+                />
+                <div
+                  class="invalid-feedback"
+                  id="confirmPassword-feedback"
+                ></div>
+              </div>
+              <div class="">
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script type="module" src="./script.ts"></script>
   </body>

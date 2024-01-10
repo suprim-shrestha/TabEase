@@ -1,4 +1,12 @@
+import { ValidationError } from "yup";
+import { ISignUp } from "../../../interfaces/auth.interface";
+import { signupSchema } from "../../../schema/auth.schema";
 import { signup } from "../../../utils/auth.util";
+import {
+  displayValidationError,
+  validateFormData,
+} from "../../../utils/validator.util";
+import { AxiosError } from "axios";
 
 const signupForm = document.getElementById("signup-form") as HTMLFormElement;
 
@@ -11,14 +19,41 @@ async function handleSignup(e: Event) {
     const email = signupForm.email.value;
     const username = signupForm.username.value;
     const password = signupForm.password.value;
-    const user = {
+    const confirmPassword = signupForm.confirmPassword.value;
+    const user: ISignUp = {
       email,
       username,
       password,
+      confirmPassword,
     };
+    const validatedData = await validateFormData<ISignUp>(signupSchema, user);
 
-    await signup(user);
+    delete validatedData.confirmPassword;
+
+    await signup(validatedData);
   } catch (error) {
-    console.log(error);
+    if (error instanceof ValidationError) {
+      error.inner.forEach((inner) => {
+        displayValidationError(signupForm, inner.path!, inner.message);
+      });
+    }
+    if (error instanceof AxiosError) {
+      if (error.response?.status === 409) {
+        displayValidationError(signupForm, "email", error.response.data.error);
+      }
+    }
   }
 }
+
+signupForm.email.addEventListener("input", () => {
+  signupForm.email.classList.remove("is-invalid");
+});
+signupForm.username.addEventListener("input", () => {
+  signupForm.username.classList.remove("is-invalid");
+});
+signupForm.password.addEventListener("input", () => {
+  signupForm.password.classList.remove("is-invalid");
+});
+signupForm.confirmPassword.addEventListener("input", () => {
+  signupForm.confirmPassword.classList.remove("is-invalid");
+});

@@ -16,11 +16,12 @@
               <div class="mb-4">
                 <label for="email" class="form-label"> Email </label>
                 <input
-                  type="email"
+                  type="text"
                   name="email"
                   id="email"
                   class="form-control"
                 />
+                <div class="invalid-feedback" id="email-feedback"></div>
               </div>
               <div class="mb-4">
                 <label for="password" class="form-label">Password</label>
@@ -30,6 +31,7 @@
                   id="password"
                   class="form-control"
                 />
+                <div class="invalid-feedback" id="password-feedback"></div>
               </div>
               <div>
                 <button type="submit" class="btn btn-primary">Log In</button>
