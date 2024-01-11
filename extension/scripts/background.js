@@ -10,33 +10,51 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   }
   if (request.action === "openTabs") {
     await closeAllTabs();
-    openTabs(request.groupId);
+    await openTabs(request.groupId);
+    await closeFirstTab();
   }
 });
 
+/**
+ * Close all in active tabs in the same window
+ */
 function closeAllInactiveTabs() {
   chrome.tabs.query({ currentWindow: true }, (tabs) => {
-    console.log(tabs);
-    const currentTabIds = tabs.filter((tab) => tab.active).map((tab) => tab.id);
-
     tabs.forEach((tab) => {
-      if (!currentTabIds.includes(tab.id)) {
+      if (!tab.id) {
         chrome.tabs.remove(tab.id);
       }
     });
   });
 }
 
+/**
+ * Closes all tabs that are not the TabEase website and not the first tab to close
+ */
 async function closeAllTabs() {
   const tabs = await chrome.tabs.query({ currentWindow: true });
-  console.log(tabs);
-  tabs.forEach((tab) => {
-    if (!tab.url.includes(FRONTEND_URL)) {
+  const tabsToClose = tabs.filter((tab) => !tab.url.includes(FRONTEND_URL));
+  tabsToClose.forEach((tab) => {
+    if (tab !== tabsToClose[0]) {
       chrome.tabs.remove(tab.id);
     }
   });
 }
 
+/**
+ * Closes first tab that is not the TabEase website
+ */
+async function closeFirstTab() {
+  const tabs = await chrome.tabs.query({ currentWindow: true });
+  const tabsToClose = tabs.filter((tab) => !tab.url.includes(FRONTEND_URL));
+  chrome.tabs.remove(tabsToClose[0].id);
+}
+
+/**
+ * Open all links in the group
+ *
+ * @param {number} groupId
+ */
 async function openTabs(groupId) {
   const tabArray = await getLinks(groupId);
   tabArray.forEach((tab) => {
@@ -44,6 +62,12 @@ async function openTabs(groupId) {
   });
 }
 
+/**
+ * Fetch all links in the group from database
+ *
+ * @param {number} groupId
+ * @returns links[]
+ */
 async function getLinks(groupId) {
   try {
     const response = await fetch(`${API_URL}/links/?groupId=${groupId}`);
