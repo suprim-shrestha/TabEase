@@ -5,32 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home</title>
     <script type="module" src="./../../services/checkAuth.ts"></script>
+    <link rel="stylesheet" href="./../../styles/style.scss" />
   </head>
   <body>
-    <h1>Logged In</h1>
-    <button id="logout-btn">Log out</button>
-    <div class="groups" id="groups"></div>
-    <form id="add-group">
-      <input
-        type="text"
-        id="groupName"
-        name="groupName"
-        placeholder="Add Group"
-      />
-      <button type="submit" id="add-group-btn">Add group</button>
-    </form>
-    <div class="links" id="links"></div>
-    <div class="add-link">
-      <form id="add-link-form">
-        <input
-          type="text"
-          id="linkTitle"
-          name="linkTitle"
-          placeholder="Link Title"
-        />
-        <input type="text" id="url" name="url" placeholder="Link Url" />
-        <button type="submit">Add Link</button>
-      </form>
+    <div class="container mt-5">
+      <div class="row g-3">
+        <div class="">
+          <h1>Logged In</h1>
+          <button id="logout-btn" class="btn btn-primary">Log out</button>
+        </div>
+        <div class="">
+          <button id="closeInactiveTabsButton">Close Inactive Tabs</button>
+        </div>
+        <div class="groups" id="groups"></div>
+        <form id="add-group">
+          <input
+            class="form-control"
+            type="text"
+            id="groupName"
+            name="groupName"
+            placeholder="Add Group"
+          />
+          <button type="submit" id="add-group-btn" class="btn btn-primary">
+            Add group
+          </button>
+        </form>
+        <div class="links" id="links"></div>
+        <div class="add-link">
+          <form id="add-link-form">
+            <input
+              class="form-control"
+              type="text"
+              id="linkTitle"
+              name="linkTitle"
+              placeholder="Link Title"
+            />
+            <input
+              class="form-control"
+              type="text"
+              id="url"
+              name="url"
+              placeholder="Link Url"
+            />
+            <button type="submit" class="btn btn-primary">Add Link</button>
+          </form>
+        </div>
+      </div>
     </div>
 
     <script type="module" src="./script.ts"></script>

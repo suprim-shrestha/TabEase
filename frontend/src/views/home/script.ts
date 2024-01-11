@@ -15,7 +15,7 @@ const groupsDiv = document.getElementById("groups") as HTMLDivElement;
 const linksDiv = document.getElementById("links") as HTMLDivElement;
 const addLinkForm = document.getElementById("add-link-form") as HTMLFormElement;
 
-let curentGroup = 0;
+let currentGroup = 0;
 
 async function getGroups(initialGet = false) {
   try {
@@ -24,10 +24,10 @@ async function getGroups(initialGet = false) {
     console.log(groups);
     if (groups.length !== 0) {
       if (initialGet) {
-        curentGroup = groups[0].id;
+        currentGroup = groups[0].id;
       }
       renderGroups(groups);
-      getLinks(curentGroup);
+      getLinks(currentGroup);
     }
   } catch (error) {
     console.log(error);
@@ -57,7 +57,7 @@ function renderGroups(groups: IGroup[]) {
     const btnElement = document.createElement("button");
     btnElement.innerText = "Get Links";
     btnElement.addEventListener("click", () => {
-      curentGroup = group.id;
+      currentGroup = group.id;
       getLinks(group.id);
     });
     listElement.appendChild(btnElement);
@@ -106,7 +106,7 @@ async function handleAddGroup(e: Event) {
     };
     const response = await http.post("/groups/", newGroup);
     console.log(response);
-    curentGroup = response.data.data.id;
+    currentGroup = response.data.data.id;
     await getGroups();
     addGroupForm.groupName.value = "";
   } catch (error) {
@@ -124,11 +124,14 @@ async function handleAddLink(e: Event) {
       title,
       url,
     };
-    const response = await http.post(`/links/?groupId=${curentGroup}`, newLink);
+    const response = await http.post(
+      `/links/?groupId=${currentGroup}`,
+      newLink
+    );
     addLinkForm.linkTitle.value = "";
     addLinkForm.url.value = "";
     console.log(response);
-    await getLinks(curentGroup);
+    await getLinks(currentGroup);
   } catch (error) {
     console.log(error);
   }

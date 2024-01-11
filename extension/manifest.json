@@ -4,7 +4,8 @@
   "description": "Extension for TabEase",
   "version": "0.1.0",
   "permissions": [
-    "tabs"
+    "tabs",
+    "cookies"
   ],
   "icons": {
     "16": "images/icon-16.png",
@@ -14,5 +15,17 @@
   },
   "action": {
     "default_popup": "popup/popup.html"
-  }
+  },
+  "background": {
+    "service_worker": "scripts/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["scripts/content.js"]
+    }
+  ],
+  "host_permissions": [
+    "*://*/*"
+  ]
 }
