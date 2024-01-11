@@ -10,8 +10,37 @@ closeAllTabsBtn.addEventListener("click", () => {
   chrome.runtime.sendMessage({ action: "closeAllTabs" });
 });
 
-const openTabsBtn = document.getElementById("openTabsBtn");
+async function getGroups() {
+  try {
+    const response = await fetch("http://localhost:3000/groups/");
+    const groups = await response.json();
+    console.log(groups.data);
+    if (groups.data.length !== 0) {
+      renderGroups(groups.data);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+getGroups();
 
-openTabsBtn.addEventListener("click", () => {
-  chrome.runtime.sendMessage({ action: "openTabs", groupId: 3 });
-});
+const groupsDiv = document.getElementById("groups");
+
+function renderGroups(groups) {
+  const ulElement = document.createElement("ul");
+
+  groups.forEach((group) => {
+    const listElement = document.createElement("li");
+    listElement.innerText = group.name;
+    const btnElement = document.createElement("button");
+    btnElement.innerText = "Open Links";
+    btnElement.addEventListener("click", () => {
+      chrome.runtime.sendMessage({ action: "openTabs", groupId: group.id });
+    });
+    listElement.appendChild(btnElement);
+    ulElement.appendChild(listElement);
+  });
+
+  groupsDiv.innerHTML = "";
+  groupsDiv.appendChild(ulElement);
+}

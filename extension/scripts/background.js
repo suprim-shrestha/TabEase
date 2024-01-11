@@ -1,7 +1,7 @@
 const FRONTEND_URL = "http://localhost:4000";
 const API_URL = "http://localhost:3000";
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   if (request.action === "closeAllInactiveTabs") {
     closeAllInactiveTabs();
   }
@@ -9,6 +9,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     closeAllTabs();
   }
   if (request.action === "openTabs") {
+    await closeAllTabs();
     openTabs(request.groupId);
   }
 });
@@ -43,6 +44,16 @@ async function openTabs(groupId) {
   });
 }
 
+async function getLinks(groupId) {
+  try {
+    const response = await fetch(`${API_URL}/links/?groupId=${groupId}`);
+    const links = await response.json();
+    return links.data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function getCookie() {
   return chrome.cookies.get({
     name: "accessToken",
@@ -69,13 +80,3 @@ async function setCookie() {
 }
 
 setCookie();
-
-async function getLinks(groupId) {
-  try {
-    const response = await fetch(`${API_URL}/links/?groupId=${groupId}`);
-    const links = await response.json();
-    return links.data;
-  } catch (error) {
-    console.log(error);
-  }
-}
