@@ -136,3 +136,38 @@ async function handleAddLink(e: Event) {
     console.log(error);
   }
 }
+
+const openTabs = document.getElementById("openTabs") as HTMLButtonElement;
+const replaceTabs = document.getElementById("replaceTabs") as HTMLButtonElement;
+const openTabsInNewWindow = document.getElementById(
+  "openTabsInNewWindow"
+) as HTMLButtonElement;
+
+// Event listeners that send message to be received by extension
+openTabs.addEventListener("click", () => {
+  window.postMessage(
+    {
+      source: "webpage",
+      message: { action: "openTabs", groupId: currentGroup },
+    },
+    "*"
+  );
+});
+replaceTabs.addEventListener("click", () => {
+  window.postMessage(
+    {
+      source: "webpage",
+      message: { action: "replaceTabs", groupId: currentGroup },
+    },
+    "*"
+  );
+});
+openTabsInNewWindow.addEventListener("click", () => {
+  window.postMessage(
+    {
+      source: "webpage",
+      message: { action: "openTabsInNewWindow", groupId: currentGroup },
+    },
+    "*"
+  );
+});

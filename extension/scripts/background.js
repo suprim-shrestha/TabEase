@@ -63,9 +63,11 @@ async function closeFirstTab() {
  */
 async function openTabs(groupId) {
   const tabArray = await getLinks(groupId);
-  tabArray.forEach((tab) => {
-    chrome.tabs.create({ url: tab.url, active: false });
-  });
+  if (tabArray && tabArray.length > 0) {
+    tabArray.forEach((tab) => {
+      chrome.tabs.create({ url: tab.url, active: false });
+    });
+  }
 }
 
 /**
@@ -76,9 +78,11 @@ async function openTabs(groupId) {
 async function openTabsInNewWindow(groupId) {
   const tabArray = await getLinks(groupId);
 
-  const urls = tabArray.map((tab) => tab.url);
+  if (tabArray && tabArray.length > 0) {
+    const urls = tabArray.map((tab) => tab.url);
 
-  chrome.windows.create({ url: urls, focused: true });
+    chrome.windows.create({ url: urls, focused: true });
+  }
 }
 
 /**
