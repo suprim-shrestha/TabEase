@@ -32,12 +32,34 @@ function renderGroups(groups) {
   groups.forEach((group) => {
     const listElement = document.createElement("li");
     listElement.innerText = group.name;
-    const btnElement = document.createElement("button");
-    btnElement.innerText = "Open Links";
-    btnElement.addEventListener("click", () => {
+
+    // Open all links in the group
+    const openAllBtn = document.createElement("button");
+    openAllBtn.innerText = "Open Links";
+    openAllBtn.addEventListener("click", () => {
       chrome.runtime.sendMessage({ action: "openTabs", groupId: group.id });
     });
-    listElement.appendChild(btnElement);
+    listElement.appendChild(openAllBtn);
+
+    // Replace current tabs with links in group
+    const replaceTabsBtn = document.createElement("button");
+    replaceTabsBtn.innerText = "Replace Tabs";
+    replaceTabsBtn.addEventListener("click", () => {
+      chrome.runtime.sendMessage({ action: "replaceTabs", groupId: group.id });
+    });
+    listElement.appendChild(replaceTabsBtn);
+
+    // Open all links in a new window
+    const openInNewWindowBtn = document.createElement("button");
+    openInNewWindowBtn.innerText = "Open in a New Window";
+    openInNewWindowBtn.addEventListener("click", () => {
+      chrome.runtime.sendMessage({
+        action: "openTabsInNewWindow",
+        groupId: group.id,
+      });
+    });
+    listElement.appendChild(openInNewWindowBtn);
+
     ulElement.appendChild(listElement);
   });
 

@@ -9,9 +9,15 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     closeAllTabs();
   }
   if (request.action === "openTabs") {
+    await openTabs(request.groupId);
+  }
+  if (request.action === "replaceTabs") {
     await closeAllTabs();
     await openTabs(request.groupId);
     await closeFirstTab();
+  }
+  if (request.action === "openTabsInNewWindow") {
+    await openTabsInNewWindow(request.groupId);
   }
 });
 
@@ -21,7 +27,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 function closeAllInactiveTabs() {
   chrome.tabs.query({ currentWindow: true }, (tabs) => {
     tabs.forEach((tab) => {
-      if (!tab.id) {
+      if (!tab.active) {
         chrome.tabs.remove(tab.id);
       }
     });
@@ -51,7 +57,7 @@ async function closeFirstTab() {
 }
 
 /**
- * Open all links in the group
+ * Open all links in the group in the same window
  *
  * @param {number} groupId
  */
@@ -60,6 +66,19 @@ async function openTabs(groupId) {
   tabArray.forEach((tab) => {
     chrome.tabs.create({ url: tab.url, active: false });
   });
+}
+
+/**
+ * Open all links in the group in a new window
+ *
+ * @param {number} groupId
+ */
+async function openTabsInNewWindow(groupId) {
+  const tabArray = await getLinks(groupId);
+
+  const urls = tabArray.map((tab) => tab.url);
+
+  chrome.windows.create({ url: urls, focused: true });
 }
 
 /**
@@ -88,7 +107,6 @@ async function getCookie() {
 async function setCookie() {
   const cookie = await getCookie();
   if (cookie) {
-    console.log("Cookie found:", cookie);
     const extensionCookie = {
       url: API_URL,
       name: cookie.name,
@@ -96,7 +114,6 @@ async function setCookie() {
     };
     const cookieRes = await chrome.cookies.set(extensionCookie);
     if (cookieRes) {
-      console.log("Cookie set", cookieRes);
       return cookie;
     }
   }
