@@ -8,7 +8,7 @@ export const linkQuerySchema = Joi.object({
 });
 
 export const createLinkSchema = Joi.object({
-  title: Joi.string().required().min(3).max(30).messages({
+  title: Joi.string().required().min(3).max(255).messages({
     "any.required": "Title is required",
     "string.empty": "Title cannot be empty",
   }),
