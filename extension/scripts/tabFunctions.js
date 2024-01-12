@@ -61,3 +61,32 @@ async function openTabsInNewWindow(groupId) {
     chrome.windows.create({ url: urls, focused: true });
   }
 }
+
+/**
+ * Returns an array of tabs objects with title and url excluding the TabEase website
+ *
+ * @returns Tabs[]
+ */
+async function getCurrentTabs() {
+  const tabs = await chrome.tabs.query({ currentWindow: true });
+  return tabs
+    .filter((tab) => !tab.url.includes(FRONTEND_URL))
+    .map((tab) => {
+      return {
+        title: tab.title,
+        url: tab.url,
+      };
+    });
+}
+
+/**
+ * Get currently opened tabs and add them to the group
+ *
+ * @param {number} groupId
+ */
+async function addTabsInGroup(groupId) {
+  const tabs = await getCurrentTabs();
+  tabs.forEach(async (tab) => {
+    await addLink(groupId, tab);
+  });
+}

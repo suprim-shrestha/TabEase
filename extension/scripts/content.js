@@ -6,7 +6,6 @@ window.addEventListener("message", (event) => {
     event.data.source === "webpage"
   ) {
     // Forward the message to the background script
-    console.log(event.data.message);
     chrome.runtime?.sendMessage(event.data.message);
   }
 });

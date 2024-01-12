@@ -15,17 +15,33 @@
           <button id="logout-btn" class="btn btn-primary">Log out</button>
         </div>
         <div class="groups" id="groups"></div>
-        <form id="add-group">
-          <input
-            class="form-control"
-            type="text"
-            id="groupName"
-            name="groupName"
-            placeholder="Add Group"
-          />
-          <button type="submit" id="add-group-btn" class="btn btn-primary">
-            Add group
-          </button>
+        <form id="add-group" class="row g-3 col-5">
+          <div>
+            <label for="groupName" class="form-label">Group Name</label>
+            <input
+              class="form-control"
+              type="text"
+              id="groupName"
+              name="groupName"
+              placeholder="Add Group"
+            />
+          </div>
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              role="switch"
+              id="withCurrentTabs"
+            />
+            <label class="form-check-label" for="withCurrentTabs"
+              >Create group with current tabs</label
+            >
+          </div>
+          <div>
+            <button type="submit" id="add-group-btn" class="btn btn-primary">
+              Add group
+            </button>
+          </div>
         </form>
         <div id="linkOptions">
           <button id="openTabs" class="btn btn-primary">Open All Links</button>

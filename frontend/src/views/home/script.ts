@@ -21,7 +21,6 @@ async function getGroups(initialGet = false) {
   try {
     const response = await http.get("/groups/");
     const groups = response.data.data;
-    console.log(groups);
     if (groups.length !== 0) {
       if (initialGet) {
         currentGroup = groups[0].id;
@@ -39,7 +38,6 @@ await getGroups(true);
 async function getLinks(groupId: number) {
   try {
     const response = await http.get(`/links/?groupId=${groupId}`);
-    console.log(response.data.data);
     renderLinks(response.data.data);
   } catch (error) {
     console.log(error);
@@ -105,9 +103,19 @@ async function handleAddGroup(e: Event) {
       name,
     };
     const response = await http.post("/groups/", newGroup);
-    console.log(response);
     currentGroup = response.data.data.id;
-    await getGroups();
+    if (addGroupForm.withCurrentTabs.checked) {
+      window.postMessage(
+        {
+          source: "webpage",
+          message: { action: "addTabsInGroup", groupId: currentGroup },
+        },
+        "*"
+      );
+    }
+    setTimeout(async () => {
+      await getGroups();
+    }, 1000);
     addGroupForm.groupName.value = "";
   } catch (error) {
     console.log(error);
@@ -124,13 +132,9 @@ async function handleAddLink(e: Event) {
       title,
       url,
     };
-    const response = await http.post(
-      `/links/?groupId=${currentGroup}`,
-      newLink
-    );
+    await http.post(`/links/?groupId=${currentGroup}`, newLink);
     addLinkForm.linkTitle.value = "";
     addLinkForm.url.value = "";
-    console.log(response);
     await getLinks(currentGroup);
   } catch (error) {
     console.log(error);
