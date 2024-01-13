@@ -10,8 +10,16 @@ logoutBtn.addEventListener("click", (e) => {
   logout();
 });
 
+const mainContainer = document.getElementById("container") as HTMLDivElement;
 const groupsDiv = document.getElementById("groups") as HTMLDivElement;
 const linksDiv = document.getElementById("links") as HTMLDivElement;
+const groupNameDisplay = document.getElementById("groupNameDisplay")!;
+const addGroupContainer = document.getElementById(
+  "addGroupContainer"
+) as HTMLDivElement;
+const addLinkContainer = document.getElementById(
+  "addLinkContainer"
+) as HTMLDivElement;
 
 const addLinkForm = document.getElementById("add-link-form") as HTMLFormElement;
 addLinkForm.addEventListener("submit", (e) => handleAddLink(e));
@@ -32,6 +40,22 @@ openTabsInNewWindow.addEventListener("click", () =>
   sendMessage("openTabsInNewWindow")
 );
 
+const addGroupBtn = document.getElementById("addGroupBtn") as HTMLButtonElement;
+addGroupBtn.addEventListener("click", displayGroupForm);
+
+const addGroupCloseBtn = document.getElementById(
+  "addGroupCloseBtn"
+) as HTMLButtonElement;
+addGroupCloseBtn.addEventListener("click", closeGroupForm);
+
+const addLinkBtn = document.getElementById("addLinkBtn") as HTMLButtonElement;
+addLinkBtn.addEventListener("click", displayLinkForm);
+
+const addLinkCloseBtn = document.getElementById(
+  "addLinkCloseBtn"
+) as HTMLButtonElement;
+addLinkCloseBtn.addEventListener("click", closeLinkForm);
+
 let currentGroup = 0;
 
 async function getGroups(initialGet = false) {
@@ -41,6 +65,7 @@ async function getGroups(initialGet = false) {
     if (groups.length !== 0) {
       if (initialGet) {
         currentGroup = groups[0].id;
+        groupNameDisplay.innerText = groups[0].name;
       }
       renderGroups(groups);
       getLinks(currentGroup);
@@ -61,17 +86,23 @@ async function getLinks(groupId: number) {
 
 function renderGroups(groups: IGroup[]) {
   const ulElement = document.createElement("ul");
+  ulElement.classList.add("list-group", "row", "g-2");
 
   groups.forEach((group) => {
     const listElement = document.createElement("li");
+    listElement.classList.add(
+      "list-group-item",
+      "btn",
+      "btn-outline-secondary",
+      "btn-lg",
+      "text-start"
+    );
     listElement.innerText = group.name;
-    const btnElement = document.createElement("button");
-    btnElement.innerText = "Get Links";
-    btnElement.addEventListener("click", () => {
+    listElement.addEventListener("click", () => {
       currentGroup = group.id;
       getLinks(group.id);
+      groupNameDisplay.innerText = group.name;
     });
-    listElement.appendChild(btnElement);
     ulElement.appendChild(listElement);
   });
 
@@ -85,22 +116,34 @@ function renderLinks(links: ILink[]) {
     return;
   }
 
-  const ulElement = document.createElement("ul");
+  const listElement = document.createElement("div");
+  listElement.classList.add("list-group", "links-list");
 
   links.forEach((link) => {
-    const listElement = document.createElement("li");
-    listElement.innerText = link.title;
+    const listItemElement = document.createElement("div");
+    listItemElement.classList.add("list-group-item", "link-item");
+
+    const listItemBody = document.createElement("div");
+    listItemBody.classList.add("row");
+
+    const listItemTitle = document.createElement("div");
+    listItemTitle.classList.add("col-11");
+    listItemTitle.innerText = link.title;
+
     const anchorElement = document.createElement("a");
-    anchorElement.innerText = "Open Link";
+    anchorElement.classList.add("col-1", "text-center");
+    anchorElement.innerHTML = "<i class='bi bi-box-arrow-up-right'></i>";
     anchorElement.href = link.url;
     anchorElement.target = "_blank";
 
-    listElement.appendChild(anchorElement);
-    ulElement.appendChild(listElement);
+    listItemElement.appendChild(listItemBody);
+    listItemBody.appendChild(listItemTitle);
+    listItemBody.appendChild(anchorElement);
+    listElement.appendChild(listItemElement);
   });
 
   linksDiv.innerHTML = "";
-  linksDiv.appendChild(ulElement);
+  linksDiv.appendChild(listElement);
 }
 
 async function handleAddGroup(e: Event) {
@@ -148,6 +191,34 @@ async function handleAddLink(e: Event) {
   } catch (error) {
     console.log(error);
   }
+}
+
+function displayGroupForm() {
+  addGroupContainer.classList.remove("d-none");
+
+  mainContainer.style.filter = "blur(5px)";
+  mainContainer.style.pointerEvents = "none";
+}
+
+function closeGroupForm() {
+  addGroupContainer.classList.add("d-none");
+
+  mainContainer.style.filter = "blur(0px)";
+  mainContainer.style.pointerEvents = "auto";
+}
+
+function displayLinkForm() {
+  addLinkContainer.classList.remove("d-none");
+
+  mainContainer.style.filter = "blur(5px)";
+  mainContainer.style.pointerEvents = "none";
+}
+
+function closeLinkForm() {
+  addLinkContainer.classList.add("d-none");
+
+  mainContainer.style.filter = "blur(0px)";
+  mainContainer.style.pointerEvents = "auto";
 }
 
 function sendMessage(action: string) {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,15 +8,58 @@
     <link rel="stylesheet" href="./../../styles/style.scss" />
   </head>
   <body>
-    <div class="container mt-5">
-      <div class="row g-3">
-        <div class="">
-          <h1>Logged In</h1>
-          <button id="logout-btn" class="btn btn-primary">Log out</button>
+    <div id="container">
+      <div
+        class="d-flex justify-content-between align-items-center p-3 bg-dark-subtle"
+      >
+        <h1>TabEase</h1>
+        <button id="logout-btn" class="btn btn-primary">Log out</button>
+      </div>
+
+      <div class="row mx-0 main-container">
+        <div class="col-3 p-3 bg-dark bg-gradient">
+          <button class="btn btn-primary my-3" id="addGroupBtn">
+            <i class="bi bi-plus-square"></i>
+            Create New Group
+          </button>
+          <div class="groups" id="groups"></div>
         </div>
-        <div class="groups" id="groups"></div>
-        <form id="add-group" class="row g-3 col-5">
-          <div>
+        <div class="col-9 p-4">
+          <div class="mb-3">
+            <h3 id="groupNameDisplay">No Group Selected</h3>
+          </div>
+          <div class="link-options mb-5">
+            <button id="openTabs" class="btn btn-primary me-3">
+              Open All Links
+            </button>
+            <button id="replaceTabs" class="btn btn-primary me-3">
+              Replace Tabs
+            </button>
+            <button id="openTabsInNewWindow" class="btn btn-primary">
+              Open Links in a New Window
+            </button>
+          </div>
+          <div class="links mb-2" id="links"></div>
+          <button class="btn btn-outline-secondary my-3" id="addLinkBtn">
+            <i class="bi bi-plus-square"></i>
+            Add New Link
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card col-md-5 d-none card-popup" id="addGroupContainer">
+      <div class="card-header d-flex py-3 align-items-center">
+        <div class="col-11">
+          <h3 class="text-center">Create New Group</h3>
+        </div>
+        <div class="col-1">
+          <button class="btn-close" id="addGroupCloseBtn"></button>
+        </div>
+      </div>
+      <div class="card-body p-4">
+        <form id="add-group">
+          <div class="mb-4">
             <label for="groupName" class="form-label">Group Name</label>
             <input
               class="form-control"
@@ -26,7 +69,7 @@
               placeholder="Add Group"
             />
           </div>
-          <div class="form-check form-switch">
+          <div class="form-check form-switch mb-4">
             <input
               class="form-check-input"
               type="checkbox"
@@ -37,29 +80,35 @@
               >Create group with current tabs</label
             >
           </div>
-          <div>
-            <button type="submit" id="add-group-btn" class="btn btn-primary">
-              Add group
-            </button>
+          <div class="mb-4">
+            <button type="submit" class="btn btn-primary">Add group</button>
           </div>
         </form>
-        <div id="linkOptions">
-          <button id="openTabs" class="btn btn-primary">Open All Links</button>
-          <button id="replaceTabs" class="btn btn-primary">Replace Tabs</button>
-          <button id="openTabsInNewWindow" class="btn btn-primary">
-            Open Links in a New Window
-          </button>
+      </div>
+    </div>
+
+    <div class="card col-md-5 d-none card-popup" id="addLinkContainer">
+      <div class="card-header d-flex py-3 align-items-center">
+        <div class="col-11">
+          <h3 class="text-center">Add New Link</h3>
         </div>
-        <div class="links" id="links"></div>
-        <div class="add-link">
-          <form id="add-link-form">
+        <div class="col-1">
+          <button class="btn-close" id="addLinkCloseBtn"></button>
+        </div>
+      </div>
+      <div class="card-body p-4">
+        <form id="add-link-form">
+          <div class="mb-4">
+            <label for="linkTitle">Link Title</label>
             <input
               class="form-control"
               type="text"
               id="linkTitle"
-              name="linkTitle"
               placeholder="Link Title"
             />
+          </div>
+          <div class="mb-4">
+            <label for="url">Link Url</label>
             <input
               class="form-control"
               type="text"
@@ -67,9 +116,11 @@
               name="url"
               placeholder="Link Url"
             />
+          </div>
+          <div class="mb-4">
             <button type="submit" class="btn btn-primary">Add Link</button>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
 
