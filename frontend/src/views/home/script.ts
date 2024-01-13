@@ -1,7 +1,22 @@
-import { ICreateGroup, IGroup } from "../../interfaces/group.interface";
-import { ICreateLink, ILink } from "../../interfaces/link.interface";
+import {
+  ICreateGroup,
+  IGroup,
+  IGroupSchema,
+} from "../../interfaces/group.interface";
+import {
+  ICreateLink,
+  ILink,
+  ILinkSchema,
+} from "../../interfaces/link.interface";
 import { http } from "../../services/http.service";
 import { logout } from "../../services/auth.service";
+import {
+  displayValidationError,
+  validateFormData,
+} from "../../utils/validator.util";
+import { groupSchema } from "../../schema/group.schema";
+import { ValidationError } from "yup";
+import { linkSchema } from "../../schema/link.schema";
 
 const logoutBtn = document.getElementById("logoutBtn") as HTMLButtonElement;
 logoutBtn.addEventListener("click", (e) => {
@@ -223,9 +238,13 @@ async function handleAddGroup(e: Event) {
   try {
     e.preventDefault();
 
-    const name = addGroupForm.groupName.value;
+    const groupName = addGroupForm.groupName.value;
+
+    const validatedData = await validateFormData<IGroupSchema>(groupSchema, {
+      groupName,
+    });
     const newGroup: ICreateGroup = {
-      name,
+      name: validatedData.groupName,
     };
     const response = await http.post("/groups/", newGroup);
     currentGroup = response.data.data.id;
@@ -244,7 +263,13 @@ async function handleAddGroup(e: Event) {
     }, 1000);
     addGroupForm.groupName.value = "";
   } catch (error) {
-    console.log(error);
+    if (error instanceof ValidationError) {
+      error.inner.forEach((inner) => {
+        displayValidationError(addGroupForm, "add", inner.path!, inner.message);
+      });
+    } else {
+      console.log(error);
+    }
   }
 }
 
@@ -252,17 +277,31 @@ async function handleEditGroup(e: Event) {
   try {
     e.preventDefault();
 
-    const name = editGroupForm.groupName.value;
+    const groupName = editGroupForm.groupName.value;
+    const validatedData = await validateFormData<IGroupSchema>(groupSchema, {
+      groupName,
+    });
     const updatedGroup: ICreateGroup = {
-      name,
+      name: validatedData.groupName,
     };
     await http.put(`/groups/${currentGroup}`, updatedGroup);
     await getGroups();
-    groupNameDisplay.innerText = name;
+    groupNameDisplay.innerText = validatedData.groupName;
     editGroupForm.groupName.value = "";
     closeForm(editGroupContainer);
   } catch (error) {
-    console.log(error);
+    if (error instanceof ValidationError) {
+      error.inner.forEach((inner) => {
+        displayValidationError(
+          editGroupForm,
+          "edit",
+          inner.path!,
+          inner.message
+        );
+      });
+    } else {
+      console.log(error);
+    }
   }
 }
 
@@ -270,11 +309,17 @@ async function handleAddLink(e: Event) {
   try {
     e.preventDefault();
 
-    const title = addLinkForm.linkTitle.value;
+    const linkTitle = addLinkForm.linkTitle.value;
     const url = addLinkForm.url.value;
-    const newLink: ICreateLink = {
-      title,
+
+    const validatedData = await validateFormData<ILinkSchema>(linkSchema, {
+      linkTitle,
       url,
+    });
+
+    const newLink: ICreateLink = {
+      title: validatedData.linkTitle,
+      url: validatedData.url,
     };
     await http.post(`/links/?groupId=${currentGroup}`, newLink);
     addLinkForm.linkTitle.value = "";
@@ -282,7 +327,13 @@ async function handleAddLink(e: Event) {
     await getLinks(currentGroup);
     closeForm(addLinkContainer);
   } catch (error) {
-    console.log(error);
+    if (error instanceof ValidationError) {
+      error.inner.forEach((inner) => {
+        displayValidationError(addLinkForm, "add", inner.path!, inner.message);
+      });
+    } else {
+      console.log(error);
+    }
   }
 }
 
@@ -291,11 +342,17 @@ async function handleEditLink(e: Event) {
     e.preventDefault();
 
     const linkId = editLinkForm.linkId.value;
-    const title = editLinkForm.linkTitle.value;
+    const linkTitle = editLinkForm.linkTitle.value;
     const url = editLinkForm.url.value;
-    const updatedLink: ICreateLink = {
-      title,
+
+    const validatedData = await validateFormData<ILinkSchema>(linkSchema, {
+      linkTitle,
       url,
+    });
+
+    const updatedLink: ICreateLink = {
+      title: validatedData.linkTitle,
+      url: validatedData.url,
     };
     await http.put(`/links/${linkId}/?groupId=${currentGroup}`, updatedLink);
     editLinkForm.linkTitle.value = "";
@@ -303,7 +360,18 @@ async function handleEditLink(e: Event) {
     await getLinks(currentGroup);
     closeForm(editLinkContainer);
   } catch (error) {
-    console.log(error);
+    if (error instanceof ValidationError) {
+      error.inner.forEach((inner) => {
+        displayValidationError(
+          editLinkForm,
+          "edit",
+          inner.path!,
+          inner.message
+        );
+      });
+    } else {
+      console.log(error);
+    }
   }
 }
 
@@ -348,3 +416,11 @@ function sendMessage(action: string) {
 }
 
 await getGroups(true);
+
+const inputFields = document.getElementsByTagName("input");
+
+for (let i = 0; i < inputFields.length; i++) {
+  inputFields[i].addEventListener("input", () => {
+    inputFields[i].classList.remove("is-invalid");
+  });
+}

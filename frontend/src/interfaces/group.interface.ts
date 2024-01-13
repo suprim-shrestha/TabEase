@@ -7,3 +7,7 @@ export interface IGroup {
 export interface ICreateGroup {
   name: string;
 }
+
+export interface IGroupSchema {
+  groupName: string;
+}

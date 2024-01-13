@@ -9,3 +9,8 @@ export interface ICreateLink {
   title: string;
   url: string;
 }
+
+export interface ILinkSchema {
+  linkTitle: string;
+  url: string;
+}
