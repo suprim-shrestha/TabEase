@@ -132,8 +132,23 @@ async function getGroups(initialGet = false) {
         currentGroup = groups[0].id;
         groupNameDisplay.innerText = groups[0].name;
       }
+      editGroupBtn.disabled = false;
+      deleteGroupBtn.disabled = false;
+      openTabs.disabled = false;
+      replaceTabs.disabled = false;
+      openTabsInNewWindow.disabled = false;
+      addLinkBtn.disabled = false;
       renderGroups(groups);
       getLinks(currentGroup);
+    } else {
+      groupsDiv.innerHTML = "<h3>Create a group to start</h3>";
+      groupNameDisplay.innerText = "No Group Selected";
+      editGroupBtn.disabled = true;
+      deleteGroupBtn.disabled = true;
+      openTabs.disabled = true;
+      replaceTabs.disabled = true;
+      openTabsInNewWindow.disabled = true;
+      addLinkBtn.disabled = true;
     }
   } catch (error) {
     console.log(error);
@@ -249,18 +264,15 @@ async function handleAddGroup(e: Event) {
     const response = await http.post("/groups/", newGroup);
     currentGroup = response.data.data.id;
     if (addGroupForm.withCurrentTabs.checked) {
-      window.postMessage(
-        {
-          source: "webpage",
-          message: { action: "addTabsInGroup", groupId: currentGroup },
-        },
-        "*"
-      );
-    }
-    setTimeout(async () => {
+      sendMessage("addTabsInGroup");
+      setTimeout(async () => {
+        await getGroups();
+      }, 1000);
+    } else {
       await getGroups();
-      closeForm(addGroupContainer);
-    }, 1000);
+    }
+    closeForm(addGroupContainer);
+    groupNameDisplay.innerText = validatedData.groupName;
     addGroupForm.groupName.value = "";
   } catch (error) {
     if (error instanceof ValidationError) {
