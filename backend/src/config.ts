@@ -6,6 +6,8 @@ config({ path: pathToEnv });
 
 const serverConfig = {
   serverPort: process.env.SERVER_PORT || 3000,
+  frontendUrl: process.env.FRONTEND_URL,
+
   saltRounds: Number(process.env.SALT_ROUNDS),
   jwt: {
     accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
