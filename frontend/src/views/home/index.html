@@ -13,10 +13,11 @@
         class="d-flex justify-content-between align-items-center p-3 bg-dark-subtle"
       >
         <h1>TabEase</h1>
-        <button id="logout-btn" class="btn btn-primary">Log out</button>
+        <button id="logoutBtn" class="btn btn-primary">Log out</button>
       </div>
 
       <div class="row mx-0 main-container">
+        <!-- Groups List -->
         <div class="col-3 p-3 bg-dark bg-gradient">
           <button class="btn btn-primary my-3" id="addGroupBtn">
             <i class="bi bi-plus-square"></i>
@@ -24,9 +25,19 @@
           </button>
           <div class="groups" id="groups"></div>
         </div>
+
+        <!-- Contents of selected group -->
         <div class="col-9 p-4">
-          <div class="mb-3">
+          <div class="mb-3 d-flex align-items-center justify-content-between">
             <h3 id="groupNameDisplay">No Group Selected</h3>
+            <div class="group-btns">
+              <button class="btn btn-outline-danger" id="deleteGroupBtn">
+                <i class="bi bi-trash"></i>
+              </button>
+              <button class="btn btn-outline-light" id="editGroupBtn">
+                <i class="bi bi-pencil"></i>
+              </button>
+            </div>
           </div>
           <div class="link-options mb-5">
             <button id="openTabs" class="btn btn-primary me-3">
@@ -48,6 +59,7 @@
       </div>
     </div>
 
+    <!-- Add Group Form Container -->
     <div class="card col-md-5 d-none card-popup" id="addGroupContainer">
       <div class="card-header d-flex py-3 align-items-center">
         <div class="col-11">
@@ -58,7 +70,7 @@
         </div>
       </div>
       <div class="card-body p-4">
-        <form id="add-group">
+        <form id="addGroupForm">
           <div class="mb-4">
             <label for="groupName" class="form-label">Group Name</label>
             <input
@@ -87,6 +99,36 @@
       </div>
     </div>
 
+    <!-- Edit Group Form Container -->
+    <div class="card col-md-5 d-none card-popup" id="editGroupContainer">
+      <div class="card-header d-flex py-3 align-items-center">
+        <div class="col-11">
+          <h3 class="text-center">Create New Group</h3>
+        </div>
+        <div class="col-1">
+          <button class="btn-close" id="editGroupCloseBtn"></button>
+        </div>
+      </div>
+      <div class="card-body p-4">
+        <form id="editGroupForm">
+          <div class="mb-4">
+            <label for="groupName" class="form-label">Group Name</label>
+            <input
+              class="form-control"
+              type="text"
+              id="groupName"
+              name="groupName"
+              placeholder="Add Group"
+            />
+          </div>
+          <div class="mb-4">
+            <button type="submit" class="btn btn-primary">Update Group</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Add Link Form Container -->
     <div class="card col-md-5 d-none card-popup" id="addLinkContainer">
       <div class="card-header d-flex py-3 align-items-center">
         <div class="col-11">
@@ -97,7 +139,7 @@
         </div>
       </div>
       <div class="card-body p-4">
-        <form id="add-link-form">
+        <form id="addLinkForm">
           <div class="mb-4">
             <label for="linkTitle">Link Title</label>
             <input
@@ -119,6 +161,45 @@
           </div>
           <div class="mb-4">
             <button type="submit" class="btn btn-primary">Add Link</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit Link Form Container -->
+    <div class="card col-md-5 d-none card-popup" id="editLinkContainer">
+      <div class="card-header d-flex py-3 align-items-center">
+        <div class="col-11">
+          <h3 class="text-center">Edit Link</h3>
+        </div>
+        <div class="col-1">
+          <button class="btn-close" id="editLinkCloseBtn"></button>
+        </div>
+      </div>
+      <div class="card-body p-4">
+        <form id="editLinkForm">
+          <input type="text" class="d-none" id="linkId" />
+          <div class="mb-4">
+            <label for="linkTitle">Link Title</label>
+            <input
+              class="form-control"
+              type="text"
+              id="linkTitle"
+              placeholder="Link Title"
+            />
+          </div>
+          <div class="mb-4">
+            <label for="url">Link Url</label>
+            <input
+              class="form-control"
+              type="text"
+              id="url"
+              name="url"
+              placeholder="Link Url"
+            />
+          </div>
+          <div class="mb-4">
+            <button type="submit" class="btn btn-primary">Edit Link</button>
           </div>
         </form>
       </div>

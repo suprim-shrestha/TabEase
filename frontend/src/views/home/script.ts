@@ -3,7 +3,7 @@ import { ICreateLink, ILink } from "../../interfaces/link.interface";
 import { http } from "../../services/http.service";
 import { logout } from "../../services/auth.service";
 
-const logoutBtn = document.getElementById("logout-btn") as HTMLButtonElement;
+const logoutBtn = document.getElementById("logoutBtn") as HTMLButtonElement;
 logoutBtn.addEventListener("click", (e) => {
   e.preventDefault();
 
@@ -17,15 +17,29 @@ const groupNameDisplay = document.getElementById("groupNameDisplay")!;
 const addGroupContainer = document.getElementById(
   "addGroupContainer"
 ) as HTMLDivElement;
+const editGroupContainer = document.getElementById(
+  "editGroupContainer"
+) as HTMLDivElement;
 const addLinkContainer = document.getElementById(
   "addLinkContainer"
 ) as HTMLDivElement;
+const editLinkContainer = document.getElementById(
+  "editLinkContainer"
+) as HTMLDivElement;
 
-const addLinkForm = document.getElementById("add-link-form") as HTMLFormElement;
+const addGroupForm = document.getElementById("addGroupForm") as HTMLFormElement;
+addGroupForm.addEventListener("submit", (e) => handleAddGroup(e));
+
+const editGroupForm = document.getElementById(
+  "editGroupForm"
+) as HTMLFormElement;
+editGroupForm.addEventListener("submit", (e) => handleEditGroup(e));
+
+const addLinkForm = document.getElementById("addLinkForm") as HTMLFormElement;
 addLinkForm.addEventListener("submit", (e) => handleAddLink(e));
 
-const addGroupForm = document.getElementById("add-group") as HTMLFormElement;
-addGroupForm.addEventListener("submit", (e) => handleAddGroup(e));
+const editLinkForm = document.getElementById("editLinkForm") as HTMLFormElement;
+editLinkForm.addEventListener("submit", (e) => handleEditLink(e));
 
 const openTabs = document.getElementById("openTabs") as HTMLButtonElement;
 const replaceTabs = document.getElementById("replaceTabs") as HTMLButtonElement;
@@ -41,20 +55,56 @@ openTabsInNewWindow.addEventListener("click", () =>
 );
 
 const addGroupBtn = document.getElementById("addGroupBtn") as HTMLButtonElement;
-addGroupBtn.addEventListener("click", displayGroupForm);
+addGroupBtn.addEventListener("click", () => {
+  displayForm(addGroupContainer);
+});
 
 const addGroupCloseBtn = document.getElementById(
   "addGroupCloseBtn"
 ) as HTMLButtonElement;
-addGroupCloseBtn.addEventListener("click", closeGroupForm);
+addGroupCloseBtn.addEventListener("click", () => {
+  closeForm(addGroupContainer);
+});
+
+const editGroupBtn = document.getElementById(
+  "editGroupBtn"
+) as HTMLButtonElement;
+editGroupBtn.addEventListener("click", async () => {
+  const response = await http.get(`/groups/${currentGroup}`);
+  const groupDetails = response.data;
+  editGroupForm.groupName.value = groupDetails.name;
+  displayForm(editGroupContainer);
+});
+
+const editGroupCloseBtn = document.getElementById(
+  "editGroupCloseBtn"
+) as HTMLButtonElement;
+editGroupCloseBtn.addEventListener("click", () => {
+  closeForm(editGroupContainer);
+});
 
 const addLinkBtn = document.getElementById("addLinkBtn") as HTMLButtonElement;
-addLinkBtn.addEventListener("click", displayLinkForm);
+addLinkBtn.addEventListener("click", () => {
+  displayForm(addLinkContainer);
+});
 
 const addLinkCloseBtn = document.getElementById(
   "addLinkCloseBtn"
 ) as HTMLButtonElement;
-addLinkCloseBtn.addEventListener("click", closeLinkForm);
+addLinkCloseBtn.addEventListener("click", () => {
+  closeForm(addLinkContainer);
+});
+const editLinkCloseBtn = document.getElementById(
+  "editLinkCloseBtn"
+) as HTMLButtonElement;
+editLinkCloseBtn.addEventListener("click", () => {
+  closeForm(editLinkContainer);
+});
+
+const deleteGroupBtn = document.getElementById(
+  "deleteGroupBtn"
+) as HTMLButtonElement;
+deleteGroupBtn.onclick = confirmDeleteGroup;
 
 let currentGroup = 0;
 
@@ -124,21 +174,44 @@ function renderLinks(links: ILink[]) {
     listItemElement.classList.add("list-group-item", "link-item");
 
     const listItemBody = document.createElement("div");
-    listItemBody.classList.add("row");
+    listItemBody.classList.add("row", "align-items-center");
 
     const listItemTitle = document.createElement("div");
-    listItemTitle.classList.add("col-11");
+    listItemTitle.classList.add("col-md-10");
     listItemTitle.innerText = link.title;
 
+    const btnDiv = document.createElement("div");
+    btnDiv.classList.add("col-md-2", "d-flex", "justify-content-end");
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.classList.add("btn", "text-danger");
+    deleteBtn.innerHTML = "<i class='bi bi-trash'></i>";
+    deleteBtn.addEventListener("click", () => confirmDeleteLink(link.id));
+
+    const editLinkBtn = document.createElement("button");
+    editLinkBtn.classList.add("btn");
+    editLinkBtn.innerHTML = "<i class='bi bi-pencil'></i>";
+    editLinkBtn.addEventListener("click", () => {
+      editLinkForm.linkId.value = link.id;
+      editLinkForm.linkTitle.value = link.title;
+      editLinkForm.url.value = link.url;
+      displayForm(editLinkContainer);
+    });
+
+    const openLinkBtn = document.createElement("button");
+    openLinkBtn.classList.add("btn");
     const anchorElement = document.createElement("a");
-    anchorElement.classList.add("col-1", "text-center");
     anchorElement.innerHTML = "<i class='bi bi-box-arrow-up-right'></i>";
     anchorElement.href = link.url;
     anchorElement.target = "_blank";
+    openLinkBtn.appendChild(anchorElement);
 
     listItemElement.appendChild(listItemBody);
     listItemBody.appendChild(listItemTitle);
-    listItemBody.appendChild(anchorElement);
+    listItemBody.appendChild(btnDiv);
+    btnDiv.appendChild(deleteBtn);
+    btnDiv.appendChild(editLinkBtn);
+    btnDiv.appendChild(openLinkBtn);
     listElement.appendChild(listItemElement);
   });
 
@@ -167,8 +240,27 @@ async function handleAddGroup(e: Event) {
     }
     setTimeout(async () => {
       await getGroups();
+      closeForm(addGroupContainer);
     }, 1000);
     addGroupForm.groupName.value = "";
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function handleEditGroup(e: Event) {
+  try {
+    e.preventDefault();
+
+    const name = editGroupForm.groupName.value;
+    const updatedGroup: ICreateGroup = {
+      name,
+    };
+    await http.put(`/groups/${currentGroup}`, updatedGroup);
+    await getGroups();
+    groupNameDisplay.innerText = name;
+    editGroupForm.groupName.value = "";
+    closeForm(editGroupContainer);
   } catch (error) {
     console.log(error);
   }
@@ -188,37 +280,61 @@ async function handleAddLink(e: Event) {
     addLinkForm.linkTitle.value = "";
     addLinkForm.url.value = "";
     await getLinks(currentGroup);
+    closeForm(addLinkContainer);
   } catch (error) {
     console.log(error);
   }
 }
 
-function displayGroupForm() {
-  addGroupContainer.classList.remove("d-none");
+async function handleEditLink(e: Event) {
+  try {
+    e.preventDefault();
+
+    const linkId = editLinkForm.linkId.value;
+    const title = editLinkForm.linkTitle.value;
+    const url = editLinkForm.url.value;
+    const updatedLink: ICreateLink = {
+      title,
+      url,
+    };
+    await http.put(`/links/${linkId}/?groupId=${currentGroup}`, updatedLink);
+    editLinkForm.linkTitle.value = "";
+    editLinkForm.url.value = "";
+    await getLinks(currentGroup);
+    closeForm(editLinkContainer);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function displayForm(formContainer: HTMLDivElement) {
+  formContainer.classList.remove("d-none");
 
   mainContainer.style.filter = "blur(5px)";
   mainContainer.style.pointerEvents = "none";
 }
 
-function closeGroupForm() {
-  addGroupContainer.classList.add("d-none");
+function closeForm(formContainer: HTMLDivElement) {
+  formContainer.classList.add("d-none");
 
   mainContainer.style.filter = "blur(0px)";
   mainContainer.style.pointerEvents = "auto";
 }
 
-function displayLinkForm() {
-  addLinkContainer.classList.remove("d-none");
-
-  mainContainer.style.filter = "blur(5px)";
-  mainContainer.style.pointerEvents = "none";
+async function confirmDeleteLink(linkId: number) {
+  const confirmDelete = confirm("Are you sure you want to delete?");
+  if (confirmDelete) {
+    await http.delete(`/links/${linkId}/?groupId=${currentGroup}`);
+    getLinks(currentGroup);
+  }
 }
 
-function closeLinkForm() {
-  addLinkContainer.classList.add("d-none");
-
-  mainContainer.style.filter = "blur(0px)";
-  mainContainer.style.pointerEvents = "auto";
+async function confirmDeleteGroup() {
+  const confirmDelete = confirm("Are you sure you want to delete?");
+  if (confirmDelete) {
+    await http.delete(`/groups/${currentGroup}/`);
+    getGroups(true);
+  }
 }
 
 function sendMessage(action: string) {
