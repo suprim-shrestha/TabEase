@@ -2,8 +2,8 @@ import { AxiosError } from "axios";
 import { ValidationError } from "yup";
 import { ILogin } from "../../../interfaces/auth.interface";
 import { loginSchema } from "../../../schema/auth.schema";
-import { http } from "../../../utils/api.util";
-import { login } from "../../../utils/auth.util";
+import { http } from "../../../services/http.service";
+import { login } from "../../../services/auth.service";
 import {
   displayValidationError,
   validateFormData,

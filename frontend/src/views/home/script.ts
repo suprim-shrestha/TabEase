@@ -1,10 +1,9 @@
 import { ICreateGroup, IGroup } from "../../interfaces/group.interface";
 import { ICreateLink, ILink } from "../../interfaces/link.interface";
-import { http } from "../../utils/api.util";
-import { logout } from "../../utils/auth.util";
+import { http } from "../../services/http.service";
+import { logout } from "../../services/auth.service";
 
 const logoutBtn = document.getElementById("logout-btn") as HTMLButtonElement;
-
 logoutBtn.addEventListener("click", (e) => {
   e.preventDefault();
 
@@ -13,7 +12,25 @@ logoutBtn.addEventListener("click", (e) => {
 
 const groupsDiv = document.getElementById("groups") as HTMLDivElement;
 const linksDiv = document.getElementById("links") as HTMLDivElement;
+
 const addLinkForm = document.getElementById("add-link-form") as HTMLFormElement;
+addLinkForm.addEventListener("submit", (e) => handleAddLink(e));
+
+const addGroupForm = document.getElementById("add-group") as HTMLFormElement;
+addGroupForm.addEventListener("submit", (e) => handleAddGroup(e));
+
+const openTabs = document.getElementById("openTabs") as HTMLButtonElement;
+const replaceTabs = document.getElementById("replaceTabs") as HTMLButtonElement;
+const openTabsInNewWindow = document.getElementById(
+  "openTabsInNewWindow"
+) as HTMLButtonElement;
+
+// Event listeners that send message to be received by extension
+openTabs.addEventListener("click", () => sendMessage("openTabs"));
+replaceTabs.addEventListener("click", () => sendMessage("replaceTabs"));
+openTabsInNewWindow.addEventListener("click", () =>
+  sendMessage("openTabsInNewWindow")
+);
 
 let currentGroup = 0;
 
@@ -33,8 +50,6 @@ async function getGroups(initialGet = false) {
   }
 }
 
-await getGroups(true);
-
 async function getLinks(groupId: number) {
   try {
     const response = await http.get(`/links/?groupId=${groupId}`);
@@ -43,8 +58,6 @@ async function getLinks(groupId: number) {
     console.log(error);
   }
 }
-
-addLinkForm.addEventListener("submit", (e) => handleAddLink(e));
 
 function renderGroups(groups: IGroup[]) {
   const ulElement = document.createElement("ul");
@@ -89,10 +102,6 @@ function renderLinks(links: ILink[]) {
   linksDiv.innerHTML = "";
   linksDiv.appendChild(ulElement);
 }
-
-const addGroupForm = document.getElementById("add-group") as HTMLFormElement;
-
-addGroupForm.addEventListener("submit", (e) => handleAddGroup(e));
 
 async function handleAddGroup(e: Event) {
   try {
@@ -141,37 +150,14 @@ async function handleAddLink(e: Event) {
   }
 }
 
-const openTabs = document.getElementById("openTabs") as HTMLButtonElement;
-const replaceTabs = document.getElementById("replaceTabs") as HTMLButtonElement;
-const openTabsInNewWindow = document.getElementById(
-  "openTabsInNewWindow"
-) as HTMLButtonElement;
+function sendMessage(action: string) {
+  window.postMessage(
+    {
+      source: "webpage",
+      message: { action, groupId: currentGroup },
+    },
+    "*"
+  );
+}
 
-// Event listeners that send message to be received by extension
-openTabs.addEventListener("click", () => {
-  window.postMessage(
-    {
-      source: "webpage",
-      message: { action: "openTabs", groupId: currentGroup },
-    },
-    "*"
-  );
-});
-replaceTabs.addEventListener("click", () => {
-  window.postMessage(
-    {
-      source: "webpage",
-      message: { action: "replaceTabs", groupId: currentGroup },
-    },
-    "*"
-  );
-});
-openTabsInNewWindow.addEventListener("click", () => {
-  window.postMessage(
-    {
-      source: "webpage",
-      message: { action: "openTabsInNewWindow", groupId: currentGroup },
-    },
-    "*"
-  );
-});
+await getGroups(true);

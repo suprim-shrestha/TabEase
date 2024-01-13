@@ -1,5 +1,5 @@
 import { ILogin, ISignUp } from "../interfaces/auth.interface";
-import { http } from "./api.util";
+import { http } from "./http.service";
 
 export async function login(user: ILogin) {
   const response = await http.post("/auth/login", user);

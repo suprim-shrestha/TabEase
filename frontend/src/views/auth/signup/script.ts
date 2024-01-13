@@ -1,7 +1,7 @@
 import { ValidationError } from "yup";
 import { ISignUp } from "../../../interfaces/auth.interface";
 import { signupSchema } from "../../../schema/auth.schema";
-import { signup } from "../../../utils/auth.util";
+import { signup } from "../../../services/auth.service";
 import {
   displayValidationError,
   validateFormData,

@@ -1,4 +1,4 @@
-import { http } from "../utils/api.util";
+import { http } from "./http.service";
 
 export async function checkUserLogin() {
   console.log("checking login");
