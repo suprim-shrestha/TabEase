@@ -34,12 +34,22 @@ async function handleSignup(e: Event) {
   } catch (error) {
     if (error instanceof ValidationError) {
       error.inner.forEach((inner) => {
-        displayValidationError(signupForm, inner.path!, inner.message);
+        displayValidationError(
+          signupForm,
+          "signup",
+          inner.path!,
+          inner.message
+        );
       });
     }
     if (error instanceof AxiosError) {
       if (error.response?.status === 409) {
-        displayValidationError(signupForm, "email", error.response.data.error);
+        displayValidationError(
+          signupForm,
+          "signup",
+          "email",
+          error.response.data.error
+        );
       }
     }
   }

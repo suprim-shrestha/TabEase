@@ -8,11 +8,12 @@ export async function validateFormData<T>(schema: yup.Schema, formData: T) {
 
 export function displayValidationError(
   formElement: HTMLFormElement,
+  formName: string,
   field: string,
   message: string
 ) {
   const feedbackElement = document.getElementById(
-    `${field}-feedback`
+    `${formName}-${field}-feedback`
   ) as HTMLDivElement;
   formElement[field].classList.add("is-invalid");
   feedbackElement.innerText = message;

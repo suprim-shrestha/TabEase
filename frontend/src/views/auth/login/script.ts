@@ -40,16 +40,22 @@ async function handleLogin(e: Event) {
   } catch (error) {
     if (error instanceof ValidationError) {
       error.inner.forEach((inner) => {
-        displayValidationError(loginForm, inner.path!, inner.message);
+        displayValidationError(loginForm, "login", inner.path!, inner.message);
       });
     }
     if (error instanceof AxiosError) {
       if (error.response?.status === 404) {
-        displayValidationError(loginForm, "email", error.response.data.error);
+        displayValidationError(
+          loginForm,
+          "login",
+          "email",
+          error.response.data.error
+        );
       }
       if (error.response?.status === 401) {
         displayValidationError(
           loginForm,
+          "login",
           "password",
           error.response.data.error
         );
