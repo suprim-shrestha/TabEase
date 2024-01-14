@@ -2,17 +2,21 @@ import { AxiosError } from "axios";
 import { ValidationError } from "yup";
 import { ILogin } from "../../../interfaces/auth.interface";
 import { loginSchema } from "../../../schema/auth.schema";
-import { http } from "../../../services/http.service";
 import { login } from "../../../services/auth.service";
 import {
   displayValidationError,
   validateFormData,
 } from "../../../utils/validator.util";
+import { checkUserLogin } from "../../../services/checkAuth";
 
-try {
-  await http.get("/users/me");
-} catch (error) {
-  console.log(error);
+const mainContainer = document.getElementById(
+  "main-container"
+) as HTMLDivElement;
+
+if (await checkUserLogin()) {
+  window.location.href = "/views/home/";
+} else {
+  mainContainer.classList.remove("d-none");
 }
 
 const loginForm = document.getElementById("login-form") as HTMLFormElement;

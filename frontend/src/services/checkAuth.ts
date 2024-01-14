@@ -1,14 +1,16 @@
 import { http } from "./http.service";
 
 export async function checkUserLogin() {
-  console.log("checking login");
+  const isLoggedIn = localStorage.getItem("isLoggedIn");
+  if (isLoggedIn === "true") {
+    return true;
+  } else {
+    return false;
+  }
   try {
     await http.get("/users/me");
     return true;
   } catch (error) {
-    console.log(error);
-    window.location.href = "/views/auth/login/";
+    return false;
   }
 }
-
-await checkUserLogin();

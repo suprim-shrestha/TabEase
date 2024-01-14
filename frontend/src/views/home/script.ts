@@ -17,6 +17,7 @@ import {
 import { groupSchema } from "../../schema/group.schema";
 import { ValidationError } from "yup";
 import { linkSchema } from "../../schema/link.schema";
+import { checkUserLogin } from "../../services/checkAuth";
 
 const logoutBtn = document.getElementById("logoutBtn") as HTMLButtonElement;
 logoutBtn.addEventListener("click", (e) => {
@@ -26,6 +27,13 @@ logoutBtn.addEventListener("click", (e) => {
 });
 
 const mainContainer = document.getElementById("container") as HTMLDivElement;
+
+if (await checkUserLogin()) {
+  mainContainer.classList.remove("d-none");
+} else {
+  window.location.href = "/views/auth/login/";
+}
+
 const groupsDiv = document.getElementById("groups") as HTMLDivElement;
 const linksDiv = document.getElementById("links") as HTMLDivElement;
 const groupNameDisplay = document.getElementById("groupNameDisplay")!;

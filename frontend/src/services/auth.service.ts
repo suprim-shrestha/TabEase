@@ -2,9 +2,9 @@ import { ILogin, ISignUp } from "../interfaces/auth.interface";
 import { http } from "./http.service";
 
 export async function login(user: ILogin) {
-  const response = await http.post("/auth/login", user);
+  await http.post("/auth/login", user);
 
-  console.log(response);
+  localStorage.setItem("isLoggedIn", "true");
   window.location.href = "/";
 }
 
@@ -23,9 +23,9 @@ export async function signup(user: ISignUp) {
 
 export async function logout() {
   try {
-    const response = await http.post("/auth/logout");
+    await http.post("/auth/logout");
 
-    console.log(response);
+    localStorage.setItem("isLoggedIn", "false");
     window.location.href = "/";
   } catch (error) {
     console.log(error);

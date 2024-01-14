@@ -7,6 +7,17 @@ import {
   validateFormData,
 } from "../../../utils/validator.util";
 import { AxiosError } from "axios";
+import { checkUserLogin } from "../../../services/checkAuth";
+
+const mainContainer = document.getElementById(
+  "main-container"
+) as HTMLDivElement;
+
+if (await checkUserLogin()) {
+  window.location.href = "/views/home/";
+} else {
+  mainContainer.classList.remove("d-none");
+}
 
 const signupForm = document.getElementById("signup-form") as HTMLFormElement;
 
