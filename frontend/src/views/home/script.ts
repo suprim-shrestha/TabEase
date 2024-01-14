@@ -34,6 +34,20 @@ if (await checkUserLogin()) {
   window.location.href = "/views/auth/login/";
 }
 
+const rightDiv = document.getElementById("rightDiv") as HTMLDivElement;
+const sidebar = document.getElementById("sidebar") as HTMLDivElement;
+const sidebarToggleBtn = document.getElementById(
+  "sidebarToggleBtn"
+) as HTMLButtonElement;
+sidebarToggleBtn.addEventListener("click", () => {
+  sidebar.classList.toggle("active");
+  if (sidebar.classList.contains("active")) {
+    sidebar.style.height = rightDiv.clientHeight + "px";
+  } else {
+    sidebar.removeAttribute("style");
+  }
+});
+
 const groupsDiv = document.getElementById("groups") as HTMLDivElement;
 const linksDiv = document.getElementById("links") as HTMLDivElement;
 const groupNameDisplay = document.getElementById("groupNameDisplay")!;
@@ -190,6 +204,8 @@ function renderGroups(groups: IGroup[]) {
       currentGroup = group.id;
       getLinks(group.id);
       groupNameDisplay.innerText = group.name;
+      sidebar.classList.remove("active");
+      sidebar.removeAttribute("style");
     });
     ulElement.appendChild(listElement);
   });
@@ -438,8 +454,6 @@ function sendMessage(action: string) {
   );
 }
 
-await getGroups(true);
-
 const inputFields = document.getElementsByTagName("input");
 
 for (let i = 0; i < inputFields.length; i++) {
@@ -447,3 +461,5 @@ for (let i = 0; i < inputFields.length; i++) {
     inputFields[i].classList.remove("is-invalid");
   });
 }
+
+await getGroups(true);

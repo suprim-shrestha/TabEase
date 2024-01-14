@@ -11,13 +11,18 @@
       <div
         class="d-flex justify-content-between align-items-center p-3 bg-dark-subtle"
       >
-        <h1>TabEase</h1>
+        <div class="d-flex align-items-center">
+          <button class="btn d-lg-none me-2" id="sidebarToggleBtn">
+            <i class="bi bi-list"></i>
+          </button>
+          <h1>TabEase</h1>
+        </div>
         <button id="logoutBtn" class="btn btn-primary">Log out</button>
       </div>
 
       <div class="row mx-0 main-container">
         <!-- Groups List -->
-        <div class="col-3 p-3 bg-dark bg-gradient">
+        <div class="col-3 p-3 bg-dark bg-gradient" id="sidebar">
           <button class="btn btn-primary my-3" id="addGroupBtn">
             <i class="bi bi-plus-square"></i>
             Create New Group
@@ -28,7 +33,7 @@
         </div>
 
         <!-- Contents of selected group -->
-        <div class="col-9 p-4">
+        <div class="col-lg-9 p-4" id="rightDiv">
           <div class="mb-3 d-flex align-items-center justify-content-between">
             <h3 id="groupNameDisplay">No Group Selected</h3>
             <div class="group-btns">
