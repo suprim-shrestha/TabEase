@@ -1,22 +1,22 @@
-const closeInactiveTabsBtn = document.getElementById("closeInactiveTabsBtn");
-
-closeInactiveTabsBtn.addEventListener("click", () => {
-  chrome.runtime.sendMessage({ action: "closeAllInactiveTabs" });
-});
-
-const closeAllTabsBtn = document.getElementById("closeAllTabsBtn");
-
-closeAllTabsBtn.addEventListener("click", () => {
-  chrome.runtime.sendMessage({ action: "closeAllTabs" });
+const homeBtn = document.getElementById("homeBtn");
+homeBtn.addEventListener("click", () => {
+  chrome.tabs.create({ url: FRONTEND_URL });
 });
 
 async function getGroups() {
   try {
-    const response = await fetch("http://localhost:3000/groups/");
+    const response = await fetch(`${API_URL}/groups/`);
+    if (!response.ok) {
+      if (response.status === 401) {
+        displayLoginMessage();
+        return;
+      }
+    }
     const groups = await response.json();
-    console.log(groups.data);
-    if (groups.data.length !== 0) {
+    if (groups.data && groups.data.length !== 0) {
       renderGroups(groups.data);
+    } else {
+      groupsDiv.innerHTML = "No Groups";
     }
   } catch (error) {
     console.log(error);
@@ -27,42 +27,77 @@ getGroups();
 const groupsDiv = document.getElementById("groups");
 
 function renderGroups(groups) {
-  const ulElement = document.createElement("ul");
+  const listElement = document.createElement("div");
+  listElement.classList.add("list-group");
 
   groups.forEach((group) => {
-    const listElement = document.createElement("li");
-    listElement.innerText = group.name;
+    const listItemElement = document.createElement("div");
+    listItemElement.classList.add("list-group-item");
+
+    const listItemBody = document.createElement("div");
+    listItemBody.classList.add("row", "align-items-center");
+
+    // Group name
+    const listItemName = document.createElement("div");
+    listItemName.classList.add("col-10", "text-start");
+    listItemName.innerText = group.name;
+
+    // Div for all buttons
+    const btnDiv = document.createElement("div");
+    btnDiv.classList.add("col-2", "d-flex", "justify-content-end");
 
     // Open all links in the group
     const openAllBtn = document.createElement("button");
-    openAllBtn.innerText = "Open Links";
+    openAllBtn.classList.add("btn");
+    openAllBtn.title = "Open all links in current window";
+    openAllBtn.innerHTML = `<i class="bi bi-box-arrow-up-right"></i>`;
     openAllBtn.addEventListener("click", () => {
       chrome.runtime.sendMessage({ action: "openTabs", groupId: group.id });
     });
-    listElement.appendChild(openAllBtn);
+    btnDiv.appendChild(openAllBtn);
 
     // Replace current tabs with links in group
     const replaceTabsBtn = document.createElement("button");
-    replaceTabsBtn.innerText = "Replace Tabs";
+    replaceTabsBtn.classList.add("btn");
+    replaceTabsBtn.title = "Replace current tabs and open all links";
+    replaceTabsBtn.innerHTML = `<i class="bi bi-arrow-left-right"></i>`;
     replaceTabsBtn.addEventListener("click", () => {
       chrome.runtime.sendMessage({ action: "replaceTabs", groupId: group.id });
     });
-    listElement.appendChild(replaceTabsBtn);
+    btnDiv.appendChild(replaceTabsBtn);
 
     // Open all links in a new window
     const openInNewWindowBtn = document.createElement("button");
-    openInNewWindowBtn.innerText = "Open in a New Window";
+    openInNewWindowBtn.classList.add("btn");
+    openInNewWindowBtn.title = "Open all links in a new window";
+    openInNewWindowBtn.innerHTML = `<i class="bi bi-box-arrow-up"></i>`;
     openInNewWindowBtn.addEventListener("click", () => {
       chrome.runtime.sendMessage({
         action: "openTabsInNewWindow",
         groupId: group.id,
       });
     });
-    listElement.appendChild(openInNewWindowBtn);
+    btnDiv.appendChild(openInNewWindowBtn);
 
-    ulElement.appendChild(listElement);
+    listItemBody.appendChild(listItemName);
+    listItemBody.appendChild(btnDiv);
+
+    listItemElement.appendChild(listItemBody);
+    listElement.appendChild(listItemElement);
   });
 
   groupsDiv.innerHTML = "";
-  groupsDiv.appendChild(ulElement);
+  groupsDiv.appendChild(listElement);
+}
+
+function displayLoginMessage() {
+  groupsDiv.innerText = "User not logged in? ";
+  const loginElement = document.createElement("a");
+  loginElement.classList.add("text-link");
+  loginElement.role = "button";
+  loginElement.innerText = "Login";
+  loginElement.addEventListener("click", () => {
+    chrome.tabs.create({ url: `${FRONTEND_URL}/views/login` });
+  });
+  groupsDiv.appendChild(loginElement);
 }
