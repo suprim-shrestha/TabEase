@@ -13,7 +13,7 @@ import {
 
 const app = express();
 
-app.use(cookieParser(config.cookieSecret));
+app.use(cookieParser(config.cookie.secret));
 
 app.use(express.json());
 

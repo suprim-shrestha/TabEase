@@ -9,6 +9,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from "../exceptions";
+import { JwtPayload } from "../interfaces/jwt.interface";
 
 export async function signup(userDetails: ISignUp) {
   const user = await UserModel.getUserByEmail(userDetails.email);
@@ -63,6 +64,30 @@ export async function login(body: ILogin) {
   });
 
   return {
+    accessToken,
+    refreshToken,
+  };
+}
+
+export async function refresh(token: string) {
+  const payload = jwt.verify(
+    token,
+    config.jwt.refreshTokenSecret!
+  ) as JwtPayload;
+
+  delete payload.iat;
+  delete payload.exp;
+
+  const accessToken = jwt.sign(payload, config.jwt.accessTokenSecret!, {
+    expiresIn: config.jwt.accessTokenExpiry,
+  });
+
+  const refreshToken = jwt.sign(payload, config.jwt.refreshTokenSecret!, {
+    expiresIn: config.jwt.refreshTokenExpiry,
+  });
+
+  return {
+    message: "Token Refreshed",
     accessToken,
     refreshToken,
   };

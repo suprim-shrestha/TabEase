@@ -16,7 +16,11 @@ const serverConfig = {
     refreshTokenExpiry: process.env.REFRESH_TOKEN_EXPIRY,
   },
 
-  cookieSecret: process.env.COOKIE_SECRET,
+  cookie: {
+    secret: process.env.COOKIE_SECRET,
+    maxAge: Number(process.env.COOKIE_MAX_AGE),
+    refreshMaxAge: Number(process.env.COOKIE_REFRESH_MAX_AGE),
+  },
 
   database: {
     charset: "utf8",

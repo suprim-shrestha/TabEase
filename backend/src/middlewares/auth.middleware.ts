@@ -23,6 +23,6 @@ export const auth = async (
 
     next();
   } catch (error) {
-    next(error);
+    next(new UnauthorizedException((error as Error).message));
   }
 };
