@@ -18,7 +18,18 @@ import { groupSchema } from "../../schema/group.schema";
 import { ValidationError } from "yup";
 import { linkSchema } from "../../schema/link.schema";
 import { checkUserLogin } from "../../services/checkAuth";
+import { resetInvalidInputClass } from "../../utils/util";
 
+const mainContainer = document.getElementById("container") as HTMLDivElement;
+
+// Check user login
+if (await checkUserLogin()) {
+  mainContainer.classList.remove("d-none");
+} else {
+  window.location.href = "/views/auth/login/";
+}
+
+// Logout button
 const logoutBtn = document.getElementById("logoutBtn") as HTMLButtonElement;
 logoutBtn.addEventListener("click", (e) => {
   e.preventDefault();
@@ -26,14 +37,7 @@ logoutBtn.addEventListener("click", (e) => {
   logout();
 });
 
-const mainContainer = document.getElementById("container") as HTMLDivElement;
-
-if (await checkUserLogin()) {
-  mainContainer.classList.remove("d-none");
-} else {
-  window.location.href = "/views/auth/login/";
-}
-
+// Sidebar toggle
 const rightDiv = document.getElementById("rightDiv") as HTMLDivElement;
 const sidebar = document.getElementById("sidebar") as HTMLDivElement;
 const sidebarToggleBtn = document.getElementById(
@@ -48,6 +52,7 @@ sidebarToggleBtn.addEventListener("click", () => {
   }
 });
 
+// Div containers
 const groupsDiv = document.getElementById("groups") as HTMLDivElement;
 const linksDiv = document.getElementById("links") as HTMLDivElement;
 const groupNameDisplay = document.getElementById("groupNameDisplay")!;
@@ -64,6 +69,7 @@ const editLinkContainer = document.getElementById(
   "editLinkContainer"
 ) as HTMLDivElement;
 
+// Form event listeners
 const addGroupForm = document.getElementById("addGroupForm") as HTMLFormElement;
 addGroupForm.addEventListener("submit", (e) => handleAddGroup(e));
 
@@ -78,6 +84,7 @@ addLinkForm.addEventListener("submit", (e) => handleAddLink(e));
 const editLinkForm = document.getElementById("editLinkForm") as HTMLFormElement;
 editLinkForm.addEventListener("submit", (e) => handleEditLink(e));
 
+// Buttons for open links in group options
 const openTabs = document.getElementById("openTabs") as HTMLButtonElement;
 const replaceTabs = document.getElementById("replaceTabs") as HTMLButtonElement;
 const openTabsInNewWindow = document.getElementById(
@@ -91,6 +98,7 @@ openTabsInNewWindow.addEventListener("click", () =>
   sendMessage("openTabsInNewWindow")
 );
 
+// Display and close forms buttons
 const addGroupBtn = document.getElementById("addGroupBtn") as HTMLButtonElement;
 addGroupBtn.addEventListener("click", () => {
   displayForm(addGroupContainer);
@@ -120,6 +128,11 @@ editGroupCloseBtn.addEventListener("click", () => {
   closeForm(editGroupContainer);
 });
 
+const deleteGroupBtn = document.getElementById(
+  "deleteGroupBtn"
+) as HTMLButtonElement;
+deleteGroupBtn.onclick = confirmDeleteGroup;
+
 const addLinkBtn = document.getElementById("addLinkBtn") as HTMLButtonElement;
 addLinkBtn.addEventListener("click", () => {
   displayForm(addLinkContainer);
@@ -138,45 +151,47 @@ editLinkCloseBtn.addEventListener("click", () => {
   closeForm(editLinkContainer);
 });
 
-const deleteGroupBtn = document.getElementById(
-  "deleteGroupBtn"
-) as HTMLButtonElement;
-deleteGroupBtn.onclick = confirmDeleteGroup;
-
 let currentGroup = 0;
 
+/**
+ * Get all groups for current user
+ *
+ * @param initialGet Sets currentGroup to first group
+ */
 async function getGroups(initialGet = false) {
-  try {
-    const response = await http.get("/groups/");
-    const groups = response.data.data;
-    if (groups.length !== 0) {
-      if (initialGet) {
-        currentGroup = groups[0].id;
-        groupNameDisplay.innerText = groups[0].name;
-      }
-      editGroupBtn.disabled = false;
-      deleteGroupBtn.disabled = false;
-      openTabs.disabled = false;
-      replaceTabs.disabled = false;
-      openTabsInNewWindow.disabled = false;
-      addLinkBtn.disabled = false;
-      renderGroups(groups);
-      getLinks(currentGroup);
-    } else {
-      groupsDiv.innerHTML = "<h3>Create a group to start</h3>";
-      groupNameDisplay.innerText = "No Group Selected";
-      editGroupBtn.disabled = true;
-      deleteGroupBtn.disabled = true;
-      openTabs.disabled = true;
-      replaceTabs.disabled = true;
-      openTabsInNewWindow.disabled = true;
-      addLinkBtn.disabled = true;
+  const response = await http.get("/groups/");
+  const groups = response.data.data;
+  if (groups.length !== 0) {
+    if (initialGet) {
+      currentGroup = groups[0].id;
+      groupNameDisplay.innerText = groups[0].name;
     }
-  } catch (error) {
-    console.log(error);
+    editGroupBtn.disabled = false;
+    deleteGroupBtn.disabled = false;
+    openTabs.disabled = false;
+    replaceTabs.disabled = false;
+    openTabsInNewWindow.disabled = false;
+    addLinkBtn.disabled = false;
+    renderGroups(groups);
+    getLinks(currentGroup);
+  } else {
+    groupsDiv.innerHTML = "<h3>Create a group to start</h3>";
+    groupNameDisplay.innerText = "No Group Selected";
+    // Disable all buttons if user has no groups
+    editGroupBtn.disabled = true;
+    deleteGroupBtn.disabled = true;
+    openTabs.disabled = true;
+    replaceTabs.disabled = true;
+    openTabsInNewWindow.disabled = true;
+    addLinkBtn.disabled = true;
   }
 }
 
+/**
+ * Get all links belonging to a group
+ *
+ * @param groupId
+ */
 async function getLinks(groupId: number) {
   try {
     const response = await http.get(`/links/?groupId=${groupId}`);
@@ -186,6 +201,11 @@ async function getLinks(groupId: number) {
   }
 }
 
+/**
+ * Render all groups in the sidebar
+ *
+ * @param groups
+ */
 function renderGroups(groups: IGroup[]) {
   const ulElement = document.createElement("ul");
   ulElement.classList.add("list-group", "row", "g-2");
@@ -214,6 +234,11 @@ function renderGroups(groups: IGroup[]) {
   groupsDiv.appendChild(ulElement);
 }
 
+/**
+ * Render all links for selected group
+ *
+ * @param links
+ */
 function renderLinks(links: ILink[]) {
   if (links.length === 0) {
     linksDiv.innerText = "No Links";
@@ -237,11 +262,14 @@ function renderLinks(links: ILink[]) {
     const btnDiv = document.createElement("div");
     btnDiv.classList.add("col-md-2", "d-flex", "justify-content-end");
 
+    // Delete link button
     const deleteBtn = document.createElement("button");
     deleteBtn.classList.add("btn", "text-danger");
     deleteBtn.innerHTML = "<i class='bi bi-trash'></i>";
     deleteBtn.addEventListener("click", () => confirmDeleteLink(link.id));
+    btnDiv.appendChild(deleteBtn);
 
+    // Edit Link Button
     const editLinkBtn = document.createElement("button");
     editLinkBtn.classList.add("btn");
     editLinkBtn.innerHTML = "<i class='bi bi-pencil'></i>";
@@ -251,7 +279,9 @@ function renderLinks(links: ILink[]) {
       editLinkForm.url.value = link.url;
       displayForm(editLinkContainer);
     });
+    btnDiv.appendChild(editLinkBtn);
 
+    // Open Link Button
     const openLinkBtn = document.createElement("button");
     openLinkBtn.classList.add("btn");
     const anchorElement = document.createElement("a");
@@ -259,14 +289,12 @@ function renderLinks(links: ILink[]) {
     anchorElement.href = link.url;
     anchorElement.target = "_blank";
     openLinkBtn.appendChild(anchorElement);
+    btnDiv.appendChild(openLinkBtn);
 
+    listElement.appendChild(listItemElement);
     listItemElement.appendChild(listItemBody);
     listItemBody.appendChild(listItemTitle);
     listItemBody.appendChild(btnDiv);
-    btnDiv.appendChild(deleteBtn);
-    btnDiv.appendChild(editLinkBtn);
-    btnDiv.appendChild(openLinkBtn);
-    listElement.appendChild(listItemElement);
   });
 
   linksDiv.innerHTML = "";
@@ -317,11 +345,15 @@ async function handleEditGroup(e: Event) {
     const validatedData = await validateFormData<IGroupSchema>(groupSchema, {
       groupName,
     });
+
     const updatedGroup: ICreateGroup = {
       name: validatedData.groupName,
     };
+
     await http.put(`/groups/${currentGroup}`, updatedGroup);
+
     await getGroups();
+
     groupNameDisplay.innerText = validatedData.groupName;
     editGroupForm.groupName.value = "";
     closeForm(editGroupContainer);
@@ -357,9 +389,12 @@ async function handleAddLink(e: Event) {
       title: validatedData.linkTitle,
       url: validatedData.url,
     };
+
     await http.post(`/links/?groupId=${currentGroup}`, newLink);
+
     addLinkForm.linkTitle.value = "";
     addLinkForm.url.value = "";
+
     await getLinks(currentGroup);
     closeForm(addLinkContainer);
   } catch (error) {
@@ -390,9 +425,12 @@ async function handleEditLink(e: Event) {
       title: validatedData.linkTitle,
       url: validatedData.url,
     };
+
     await http.put(`/links/${linkId}/?groupId=${currentGroup}`, updatedLink);
+
     editLinkForm.linkTitle.value = "";
     editLinkForm.url.value = "";
+
     await getLinks(currentGroup);
     closeForm(editLinkContainer);
   } catch (error) {
@@ -411,6 +449,11 @@ async function handleEditLink(e: Event) {
   }
 }
 
+/**
+ * Display form div container and blur main container
+ *
+ * @param formContainer
+ */
 function displayForm(formContainer: HTMLDivElement) {
   formContainer.classList.remove("d-none");
 
@@ -418,6 +461,11 @@ function displayForm(formContainer: HTMLDivElement) {
   mainContainer.style.pointerEvents = "none";
 }
 
+/**
+ * Close form div container
+ *
+ * @param formContainer
+ */
 function closeForm(formContainer: HTMLDivElement) {
   formContainer.classList.add("d-none");
 
@@ -441,6 +489,11 @@ async function confirmDeleteGroup() {
   }
 }
 
+/**
+ * Send a message to be received by extension
+ *
+ * @param action Method to call in the extension
+ */
 function sendMessage(action: string) {
   window.postMessage(
     {
@@ -451,12 +504,6 @@ function sendMessage(action: string) {
   );
 }
 
-const inputFields = document.getElementsByTagName("input");
-
-for (let i = 0; i < inputFields.length; i++) {
-  inputFields[i].addEventListener("input", () => {
-    inputFields[i].classList.remove("is-invalid");
-  });
-}
+resetInvalidInputClass();
 
 await getGroups(true);

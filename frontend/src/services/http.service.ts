@@ -7,6 +7,7 @@ export const http = axios.create({
   withCredentials: true,
 });
 
+// Response interceptor to refresh access token if the error is due to token expiry
 http.interceptors.response.use(
   (response) => response,
   async (error) => {
