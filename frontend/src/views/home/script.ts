@@ -8,7 +8,7 @@ import {
   ILink,
   ILinkSchema,
 } from "../../interfaces/link.interface";
-import { HttpClient } from "../../services/http.service";
+import { http } from "../../services/http.service";
 import { logout } from "../../services/auth.service";
 import {
   displayValidationError,
@@ -107,7 +107,7 @@ const editGroupBtn = document.getElementById(
   "editGroupBtn"
 ) as HTMLButtonElement;
 editGroupBtn.addEventListener("click", async () => {
-  const response = await HttpClient.get(`/groups/${currentGroup}`);
+  const response = await http.get(`/groups/${currentGroup}`);
   const groupDetails = response.data;
   editGroupForm.groupName.value = groupDetails.name;
   displayForm(editGroupContainer);
@@ -147,7 +147,7 @@ let currentGroup = 0;
 
 async function getGroups(initialGet = false) {
   try {
-    const response = await HttpClient.get("/groups/");
+    const response = await http.get("/groups/");
     const groups = response.data.data;
     if (groups.length !== 0) {
       if (initialGet) {
@@ -179,7 +179,7 @@ async function getGroups(initialGet = false) {
 
 async function getLinks(groupId: number) {
   try {
-    const response = await HttpClient.get(`/links/?groupId=${groupId}`);
+    const response = await http.get(`/links/?groupId=${groupId}`);
     renderLinks(response.data.data);
   } catch (error) {
     console.log(error);
@@ -285,7 +285,7 @@ async function handleAddGroup(e: Event) {
     const newGroup: ICreateGroup = {
       name: validatedData.groupName,
     };
-    const response = await HttpClient.post("/groups/", newGroup);
+    const response = await http.post("/groups/", newGroup);
     currentGroup = response.data.data.id;
     if (addGroupForm.withCurrentTabs.checked) {
       sendMessage("addTabsInGroup");
@@ -320,7 +320,7 @@ async function handleEditGroup(e: Event) {
     const updatedGroup: ICreateGroup = {
       name: validatedData.groupName,
     };
-    await HttpClient.put(`/groups/${currentGroup}`, updatedGroup);
+    await http.put(`/groups/${currentGroup}`, updatedGroup);
     await getGroups();
     groupNameDisplay.innerText = validatedData.groupName;
     editGroupForm.groupName.value = "";
@@ -357,7 +357,7 @@ async function handleAddLink(e: Event) {
       title: validatedData.linkTitle,
       url: validatedData.url,
     };
-    await HttpClient.post(`/links/?groupId=${currentGroup}`, newLink);
+    await http.post(`/links/?groupId=${currentGroup}`, newLink);
     addLinkForm.linkTitle.value = "";
     addLinkForm.url.value = "";
     await getLinks(currentGroup);
@@ -390,10 +390,7 @@ async function handleEditLink(e: Event) {
       title: validatedData.linkTitle,
       url: validatedData.url,
     };
-    await HttpClient.put(
-      `/links/${linkId}/?groupId=${currentGroup}`,
-      updatedLink
-    );
+    await http.put(`/links/${linkId}/?groupId=${currentGroup}`, updatedLink);
     editLinkForm.linkTitle.value = "";
     editLinkForm.url.value = "";
     await getLinks(currentGroup);
@@ -431,7 +428,7 @@ function closeForm(formContainer: HTMLDivElement) {
 async function confirmDeleteLink(linkId: number) {
   const confirmDelete = confirm("Are you sure you want to delete?");
   if (confirmDelete) {
-    await HttpClient.delete(`/links/${linkId}/?groupId=${currentGroup}`);
+    await http.delete(`/links/${linkId}/?groupId=${currentGroup}`);
     getLinks(currentGroup);
   }
 }
@@ -439,7 +436,7 @@ async function confirmDeleteLink(linkId: number) {
 async function confirmDeleteGroup() {
   const confirmDelete = confirm("Are you sure you want to delete?");
   if (confirmDelete) {
-    await HttpClient.delete(`/groups/${currentGroup}/`);
+    await http.delete(`/groups/${currentGroup}/`);
     getGroups(true);
   }
 }
