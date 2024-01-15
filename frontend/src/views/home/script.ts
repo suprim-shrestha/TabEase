@@ -177,6 +177,7 @@ async function getGroups(initialGet = false) {
   } else {
     groupsDiv.innerHTML = "<h3>Create a group to start</h3>";
     groupNameDisplay.innerText = "No Group Selected";
+    linksDiv.innerText = "No Links";
     // Disable all buttons if user has no groups
     editGroupBtn.disabled = true;
     deleteGroupBtn.disabled = true;
