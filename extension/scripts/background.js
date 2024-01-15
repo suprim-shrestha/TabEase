@@ -27,5 +27,9 @@ chrome.runtime.onMessage.addListener(
     if (request.action === "addTabsInGroup") {
       await addTabsInGroup(request.groupId);
     }
+    if (request.action === "updateLinksWithCurrentTabs") {
+      await deleteAllLinks(request.groupId);
+      await addTabsInGroup(request.groupId);
+    }
   }
 );

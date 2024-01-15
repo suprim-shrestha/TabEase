@@ -32,3 +32,18 @@ async function addLink(groupId, link) {
     console.log(error);
   }
 }
+
+/**
+ * Delete all links in a group
+ *
+ * @param {number} groupId
+ */
+async function deleteAllLinks(groupId) {
+  try {
+    await fetch(`${API_URL}/links/all/?groupId=${groupId}`, {
+      method: "DELETE",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}

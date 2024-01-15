@@ -353,7 +353,14 @@ async function handleEditGroup(e: Event) {
 
     await http.put(`/groups/${currentGroup}`, updatedGroup);
 
-    await getGroups();
+    if (editGroupForm.updateWithCurrentTabs.checked) {
+      sendMessage("updateLinksWithCurrentTabs");
+      setTimeout(async () => {
+        await getGroups();
+      }, 1000);
+    } else {
+      await getGroups();
+    }
 
     groupNameDisplay.innerText = validatedData.groupName;
     editGroupForm.groupName.value = "";
