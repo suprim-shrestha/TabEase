@@ -8,6 +8,7 @@ import {
 } from "../../../utils/validator.util";
 import { AxiosError } from "axios";
 import { checkUserLogin } from "../../../services/checkAuth";
+import { resetInvalidInputClass } from "../../../utils/util";
 
 const mainContainer = document.getElementById(
   "main-container"
@@ -66,15 +67,4 @@ async function handleSignup(e: Event) {
   }
 }
 
-signupForm.email.addEventListener("input", () => {
-  signupForm.email.classList.remove("is-invalid");
-});
-signupForm.username.addEventListener("input", () => {
-  signupForm.username.classList.remove("is-invalid");
-});
-signupForm.password.addEventListener("input", () => {
-  signupForm.password.classList.remove("is-invalid");
-});
-signupForm.confirmPassword.addEventListener("input", () => {
-  signupForm.confirmPassword.classList.remove("is-invalid");
-});
+resetInvalidInputClass();

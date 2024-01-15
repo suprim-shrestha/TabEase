@@ -8,6 +8,7 @@ import {
   validateFormData,
 } from "../../../utils/validator.util";
 import { checkUserLogin } from "../../../services/checkAuth";
+import { resetInvalidInputClass } from "../../../utils/util";
 
 const mainContainer = document.getElementById(
   "main-container"
@@ -68,9 +69,4 @@ async function handleLogin(e: Event) {
   }
 }
 
-loginForm.email.addEventListener("input", () => {
-  loginForm.email.classList.remove("is-invalid");
-});
-loginForm.password.addEventListener("input", () => {
-  loginForm.password.classList.remove("is-invalid");
-});
+resetInvalidInputClass();
