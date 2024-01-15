@@ -18,7 +18,7 @@ import { groupSchema } from "../../schema/group.schema";
 import { ValidationError } from "yup";
 import { linkSchema } from "../../schema/link.schema";
 import { checkUserLogin } from "../../services/checkAuth";
-import { resetInvalidInputClass } from "../../utils/util";
+import { resetInvalidInputClass, sendMessage } from "../../utils/util";
 
 const mainContainer = document.getElementById("container") as HTMLDivElement;
 
@@ -92,10 +92,14 @@ const openTabsInNewWindow = document.getElementById(
 ) as HTMLButtonElement;
 
 // Event listeners that send message to be received by extension
-openTabs.addEventListener("click", () => sendMessage("openTabs"));
-replaceTabs.addEventListener("click", () => sendMessage("replaceTabs"));
+openTabs.addEventListener("click", () =>
+  sendMessage("openTabs", { groupId: currentGroup })
+);
+replaceTabs.addEventListener("click", () =>
+  sendMessage("replaceTabs", { groupId: currentGroup })
+);
 openTabsInNewWindow.addEventListener("click", () =>
-  sendMessage("openTabsInNewWindow")
+  sendMessage("openTabsInNewWindow", { groupId: currentGroup })
 );
 
 // Display and close forms buttons
@@ -317,7 +321,7 @@ async function handleAddGroup(e: Event) {
     const response = await http.post("/groups/", newGroup);
     currentGroup = response.data.data.id;
     if (addGroupForm.withCurrentTabs.checked) {
-      sendMessage("addTabsInGroup");
+      sendMessage("addTabsInGroup", { groupId: currentGroup });
       setTimeout(async () => {
         await getGroups();
       }, 1000);
@@ -354,7 +358,7 @@ async function handleEditGroup(e: Event) {
     await http.put(`/groups/${currentGroup}`, updatedGroup);
 
     if (editGroupForm.updateWithCurrentTabs.checked) {
-      sendMessage("updateLinksWithCurrentTabs");
+      sendMessage("updateLinksWithCurrentTabs", { groupId: currentGroup });
       setTimeout(async () => {
         await getGroups();
       }, 1000);
@@ -495,21 +499,6 @@ async function confirmDeleteGroup() {
     await http.delete(`/groups/${currentGroup}/`);
     getGroups(true);
   }
-}
-
-/**
- * Send a message to be received by extension
- *
- * @param action Method to call in the extension
- */
-function sendMessage(action: string) {
-  window.postMessage(
-    {
-      source: "webpage",
-      message: { action, groupId: currentGroup },
-    },
-    "*"
-  );
 }
 
 resetInvalidInputClass();

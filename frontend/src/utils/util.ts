@@ -10,3 +10,19 @@ export function resetInvalidInputClass() {
     });
   }
 }
+
+/**
+ * Send a message to be received by extension
+ *
+ * @param action Method to call in the extension
+ * @param options Optional options used for sending variable values
+ */
+export function sendMessage(action: string, options = {}) {
+  window.postMessage(
+    {
+      source: "webpage",
+      message: { action, ...options },
+    },
+    "*"
+  );
+}
