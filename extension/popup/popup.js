@@ -53,6 +53,7 @@ async function getGroups() {
         return;
       }
     }
+    createGroupForm.classList.remove("d-none");
     const groups = await response.json();
     if (groups.data && groups.data.length !== 0) {
       renderGroups(groups.data);
@@ -129,6 +130,7 @@ function renderGroups(groups) {
 }
 
 function displayLoginMessage() {
+  createGroupForm.classList.add("d-none");
   groupsDiv.innerText = "User not logged in? ";
   const loginElement = document.createElement("a");
   loginElement.classList.add("text-link");
