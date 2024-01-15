@@ -129,3 +129,24 @@ export async function deleteLink(
     next(error);
   }
 }
+
+export async function deleteAllLinks(
+  req: Request & { user?: JwtPayload },
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const user = req.user!;
+    const { groupId } = req.query as unknown as ILinkQuery;
+
+    await getGroupById(groupId, user.id);
+
+    await linkService.deleteAllLinks(groupId);
+
+    res.json({
+      message: "Links deleted successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+}

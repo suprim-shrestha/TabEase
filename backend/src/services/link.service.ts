@@ -49,3 +49,7 @@ export async function deleteLink(id: number, groupId: number) {
 
   await LinkModel.deleteLink(id);
 }
+
+export async function deleteAllLinks(groupId: number) {
+  await LinkModel.deleteAllLinks(groupId);
+}

@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import {
   createLink,
+  deleteAllLinks,
   deleteLink,
   getLinkById,
   getLinks,
@@ -28,6 +29,8 @@ router.post(
 );
 
 router.get("/", validateReqQuery(linkQuerySchema), getLinks);
+
+router.delete("/all", validateReqQuery(linkQuerySchema), deleteAllLinks);
 
 router.get("/:id", validateReqQuery(linkQuerySchema), getLinkById);
 

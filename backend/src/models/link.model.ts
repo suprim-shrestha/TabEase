@@ -40,4 +40,11 @@ export default class LinkModel extends BaseModel {
   static async deleteLink(id: number) {
     return this.queryBuilder().table("links").where({ id }).del();
   }
+
+  static async deleteAllLinks(groupId: number) {
+    return this.queryBuilder()
+      .table("links")
+      .where({ belongsTo: groupId })
+      .del();
+  }
 }
