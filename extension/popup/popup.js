@@ -3,6 +3,47 @@ homeBtn.addEventListener("click", () => {
   chrome.tabs.create({ url: FRONTEND_URL });
 });
 
+const groupsDiv = document.getElementById("groups");
+
+const createGroupForm = document.getElementById("createGroup");
+createGroupForm.addEventListener("submit", (e) => handleCreateGroup(e));
+createGroupForm.groupName.addEventListener("input", () => {
+  createGroupForm.groupName.classList.remove("is-invalid");
+});
+
+async function handleCreateGroup(e) {
+  e.preventDefault();
+  const groupName = createGroupForm.groupName.value;
+  if (groupName.length < 3) {
+    createGroupForm.groupName.classList.add("is-invalid");
+    return;
+  }
+
+  const newGroup = {
+    name: groupName,
+  };
+
+  const response = await fetch(`${API_URL}/groups/`, {
+    body: JSON.stringify(newGroup),
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const group = await response.json();
+  chrome.runtime.sendMessage({
+    action: "addTabsInGroup",
+    groupId: group.data.id,
+  });
+
+  setTimeout(() => {
+    getGroups();
+  }, 1000);
+
+  createGroupForm.groupName.value = "";
+}
+
 async function getGroups() {
   try {
     const response = await fetch(`${API_URL}/groups/`);
@@ -22,9 +63,6 @@ async function getGroups() {
     console.log(error);
   }
 }
-getGroups();
-
-const groupsDiv = document.getElementById("groups");
 
 function renderGroups(groups) {
   const listElement = document.createElement("div");
@@ -101,3 +139,5 @@ function displayLoginMessage() {
   });
   groupsDiv.appendChild(loginElement);
 }
+
+getGroups();
