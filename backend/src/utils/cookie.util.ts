@@ -8,6 +8,7 @@ const defaultCookieOptions = {
   httpOnly: true,
   signed: true,
   maxAge: config.cookie.maxAge,
+  domain: config.backendUrl,
 };
 
 export function setCookies(
