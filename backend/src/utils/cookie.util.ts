@@ -9,6 +9,7 @@ const defaultCookieOptions = {
   signed: true,
   maxAge: config.cookie.maxAge,
   domain: config.backendUrl,
+  sameSite: 'strict' as 'strict',
 };
 
 export function setCookies(
