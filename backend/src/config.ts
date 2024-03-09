@@ -7,6 +7,7 @@ config({ path: pathToEnv });
 const serverConfig = {
   serverPort: process.env.SERVER_PORT || 3000,
   frontendUrl: process.env.FRONTEND_URL,
+  backendUrl: process.env.BACKEND_URL,
 
   saltRounds: Number(process.env.SALT_ROUNDS),
   jwt: {
