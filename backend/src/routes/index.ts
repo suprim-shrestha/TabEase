@@ -9,11 +9,12 @@ import { auth } from "../middlewares/auth.middleware";
 
 const router = Router();
 
-router.get("/", (_req, res) => {
-  res.json({
-    message: "Server running",
+router.get("/health", (_req, res) => {
+  return res.json({
+    message: "Server is up and running.",
   });
 });
+
 router.use("/auth", authRoutes);
 router.use("/users", userRoutes);
 router.use("/groups", auth, groupRoutes);
