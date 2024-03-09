@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  backend:
+    image: node:14
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    ports:
+      - "5000:5000"
+    env_file:
+      - path: ./.env.backend
+        required: true
+    command: bash -c "npm install && npm start"
+    depends_on:
+      - database
+
+  frontend:
+    image: node:18
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "4000:4000"
+    env_file:
+      - path: .env.frontend
+        required: true
+    command: bash -c "npm install && npm run dev"
+
+
+  database:
+    image: postgres:13
+    env_file:
+      - path: ./.env.db
+        required: true
+    ports:
+      - "5432:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+volumes:
+  db:
