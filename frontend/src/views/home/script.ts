@@ -23,11 +23,13 @@ import { resetInvalidInputClass, sendMessage } from "../../utils/util";
 const mainContainer = document.getElementById("container") as HTMLDivElement;
 
 // Check user login
-if (await checkUserLogin()) {
-  mainContainer.classList.remove("d-none");
-} else {
-  window.location.href = "/views/auth/login/";
-}
+checkUserLogin().then(value => {
+  if (value) {
+    mainContainer.classList.remove("d-none");
+  } else {
+    window.location.href = "/views/auth/login/";
+  }
+})
 
 // Logout button
 const logoutBtn = document.getElementById("logoutBtn") as HTMLButtonElement;
@@ -503,4 +505,6 @@ async function confirmDeleteGroup() {
 
 resetInvalidInputClass();
 
-await getGroups(true);
+(async () => {
+  await getGroups(true);
+})();
