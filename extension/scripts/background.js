@@ -1,6 +1,5 @@
 importScripts(
   "constants.js",
-  "cookieFunctions.js",
   "apiFunctions.js",
   "tabFunctions.js"
 );
