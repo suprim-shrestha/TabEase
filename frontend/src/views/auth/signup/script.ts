@@ -14,11 +14,13 @@ const mainContainer = document.getElementById(
   "main-container"
 ) as HTMLDivElement;
 
-if (await checkUserLogin()) {
-  window.location.href = "/views/home/";
-} else {
-  mainContainer.classList.remove("d-none");
-}
+checkUserLogin().then(value => {
+  if (value) {
+    window.location.href = "/views/home/";
+  } else {
+    mainContainer.classList.remove("d-none");
+  }
+})
 
 const signupForm = document.getElementById("signup-form") as HTMLFormElement;
 
