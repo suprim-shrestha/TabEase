@@ -18,9 +18,9 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://localhost:*/*"],
+      "matches": ["https://tabease.co/*"],
       "js": ["scripts/content.js"]
     }
   ],
-  "host_permissions": ["*://localhost:*/*"]
+  "host_permissions": ["https://tabease.co/*"]
 }

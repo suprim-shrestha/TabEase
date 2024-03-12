@@ -1,2 +1,2 @@
-const FRONTEND_URL = "http://localhost:4000";
-const API_URL = "http://localhost:3000";
+const FRONTEND_URL = "https://tabease.co";
+const API_URL = "https://tabease.co/api";
