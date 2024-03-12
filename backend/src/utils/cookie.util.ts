@@ -1,14 +1,15 @@
-import { Response } from "express";
+import { CookieOptions, Response } from "express";
 import config from "../config";
 
 const COOKIE_ACCESS_KEY = "accessToken";
 const COOKIE_REFRESH_KEY = "refreshToken";
 
-const defaultCookieOptions = {
+const defaultCookieOptions: CookieOptions = {
   httpOnly: true,
   signed: true,
   maxAge: config.cookie.maxAge,
   domain: config.backendUrl,
+  sameSite: "strict",
 };
 
 export function setCookies(
