@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "TabEase",
-  "description": "Extension for TabEase",
+  "description": "TabEase streamlines online browsing with customizable tab groups and efficient navigation features.",
   "version": "1.0.0",
   "permissions": ["tabs"],
   "icons": {
