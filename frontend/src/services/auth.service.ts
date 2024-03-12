@@ -1,5 +1,5 @@
 import { ILogin, ISignUp } from "../interfaces/auth.interface";
-import { http } from "./http.service";
+import { http, httpRefresh } from "./http.service";
 
 export async function login(user: ILogin) {
   await http.post("/auth/login", user);
@@ -33,5 +33,5 @@ export async function logout() {
 }
 
 export async function refresh() {
-  await http.post("/auth/refresh");
+  await httpRefresh.post("/auth/refresh");
 }
