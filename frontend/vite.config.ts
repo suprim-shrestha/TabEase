@@ -8,12 +8,13 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        index: resolve(__dirname, 'src', 'index.html'),
-        login: resolve(__dirname, 'src', 'views/auth/login/index.html'),
-        signup: resolve(__dirname, 'src', 'views/auth/signup/index.html'),
-        home: resolve(__dirname, 'src', 'views/home/index.html')
-      }
-    }
+        index: resolve(__dirname, "src", "index.html"),
+        login: resolve(__dirname, "src", "views/auth/login/index.html"),
+        signup: resolve(__dirname, "src", "views/auth/signup/index.html"),
+        home: resolve(__dirname, "src", "views/home/index.html"),
+        privacy: resolve(__dirname, "src", "views/privacy/index.html"),
+      },
+    },
   },
   resolve: {
     alias: {
