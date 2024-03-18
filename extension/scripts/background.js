@@ -1,8 +1,4 @@
-importScripts(
-  "constants.js",
-  "apiFunctions.js",
-  "tabFunctions.js"
-);
+importScripts("constants.js", "apiFunctions.js", "tabFunctions.js");
 
 chrome.runtime.onMessage.addListener(
   async (request, _sender, _sendResponse) => {
@@ -16,7 +12,7 @@ chrome.runtime.onMessage.addListener(
       await openTabs(request.groupId);
     }
     if (request.action === "replaceTabs") {
-      await closeAllTabs();
+      await closeAllTabsExceptFirst();
       await openTabs(request.groupId);
       await closeFirstTab();
     }

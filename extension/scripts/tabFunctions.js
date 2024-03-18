@@ -12,9 +12,22 @@ function closeAllInactiveTabs() {
 }
 
 /**
- * Closes all tabs that are not the TabEase website and not the first tab to close
+ * Closes all tabs that are not the TabEase website
  */
 async function closeAllTabs() {
+  const tabs = await chrome.tabs.query({ currentWindow: true });
+
+  const tabsToClose = tabs.filter((tab) => !tab.url.includes(FRONTEND_URL));
+
+  tabsToClose.forEach((tab) => {
+    chrome.tabs.remove(tab.id);
+  });
+}
+
+/**
+ * Closes all tabs that are not the TabEase website and not the first tab to close
+ */
+async function closeAllTabsExceptFirst() {
   const tabs = await chrome.tabs.query({ currentWindow: true });
 
   const tabsToClose = tabs.filter((tab) => !tab.url.includes(FRONTEND_URL));
@@ -94,7 +107,7 @@ async function addTabsInGroup(groupId) {
   const tabs = await getCurrentTabs();
   let addPromises = [];
 
-  tabs.forEach(async (tab) => {
+  tabs.forEach((tab) => {
     const addPromise = addLink(groupId, tab);
     addPromises.push(addPromise);
   });
