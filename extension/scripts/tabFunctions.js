@@ -16,7 +16,9 @@ function closeAllInactiveTabs() {
  */
 async function closeAllTabs() {
   const tabs = await chrome.tabs.query({ currentWindow: true });
+
   const tabsToClose = tabs.filter((tab) => !tab.url.includes(FRONTEND_URL));
+
   tabsToClose.forEach((tab) => {
     if (tab !== tabsToClose[0]) {
       chrome.tabs.remove(tab.id);
@@ -29,7 +31,9 @@ async function closeAllTabs() {
  */
 async function closeFirstTab() {
   const tabs = await chrome.tabs.query({ currentWindow: true });
+
   const tabsToClose = tabs.filter((tab) => !tab.url.includes(FRONTEND_URL));
+
   chrome.tabs.remove(tabsToClose[0].id);
 }
 
@@ -40,6 +44,7 @@ async function closeFirstTab() {
  */
 async function openTabs(groupId) {
   const tabArray = await getLinks(groupId);
+
   if (tabArray && tabArray.length > 0) {
     tabArray.forEach((tab) => {
       chrome.tabs.create({ url: tab.url, active: false });
@@ -69,6 +74,7 @@ async function openTabsInNewWindow(groupId) {
  */
 async function getCurrentTabs() {
   const tabs = await chrome.tabs.query({ currentWindow: true });
+
   return tabs
     .filter((tab) => !tab.url.includes(FRONTEND_URL))
     .map((tab) => {
@@ -86,7 +92,12 @@ async function getCurrentTabs() {
  */
 async function addTabsInGroup(groupId) {
   const tabs = await getCurrentTabs();
+  let addPromises = [];
+
   tabs.forEach(async (tab) => {
-    await addLink(groupId, tab);
+    const addPromise = addLink(groupId, tab);
+    addPromises.push(addPromise);
   });
+
+  await Promise.all(addPromises);
 }
