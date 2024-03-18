@@ -3,6 +3,8 @@ homeBtn.addEventListener("click", () => {
   chrome.tabs.create({ url: FRONTEND_URL });
 });
 
+const addBtn = document.getElementById("addBtn");
+
 const groupsDiv = document.getElementById("groups");
 
 const createGroupForm = document.getElementById("createGroup");
@@ -13,9 +15,14 @@ createGroupForm.groupName.addEventListener("input", () => {
 
 async function handleCreateGroup(e) {
   e.preventDefault();
+
+  addBtn.disabled = true;
+
   const groupName = createGroupForm.groupName.value;
   if (groupName.length < 3) {
     createGroupForm.groupName.classList.add("is-invalid");
+    addBtn.disabled = false;
+
     return;
   }
 
@@ -38,6 +45,7 @@ async function handleCreateGroup(e) {
   });
 
   setTimeout(() => {
+    addBtn.disabled = false;
     getGroups();
   }, 1000);
 
@@ -46,15 +54,21 @@ async function handleCreateGroup(e) {
 
 async function getGroups() {
   try {
+    groupsDiv.innerHTML = "Loading...";
     const response = await fetch(`${API_URL}/groups/`);
+
     if (!response.ok) {
       if (response.status === 401) {
         displayLoginMessage();
+
         return;
       }
     }
+
     createGroupForm.classList.remove("d-none");
+
     const groups = await response.json();
+
     if (groups.data && groups.data.length !== 0) {
       renderGroups(groups.data);
     } else {
@@ -84,6 +98,19 @@ function renderGroups(groups) {
     // Div for all buttons
     const btnDiv = document.createElement("div");
     btnDiv.classList.add("col-2", "d-flex", "justify-content-end");
+
+    // Open all links in the group
+    const updateGroupBtn = document.createElement("button");
+    updateGroupBtn.classList.add("btn");
+    updateGroupBtn.title = "Update group with current tabs";
+    updateGroupBtn.innerHTML = `<i class="bi bi-arrow-repeat"></i>`;
+    updateGroupBtn.addEventListener("click", () => {
+      chrome.runtime.sendMessage({
+        action: "updateLinksWithCurrentTabs",
+        groupId: group.id,
+      });
+    });
+    btnDiv.appendChild(updateGroupBtn);
 
     // Open all links in the group
     const openAllBtn = document.createElement("button");

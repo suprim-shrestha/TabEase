@@ -15,12 +15,13 @@
   </head>
   <body>
     <h1 role="button" class="text-center mt-4" id="homeBtn">TabEase</h1>
+
     <div class="create-group px-3 pt-2">
-      <form id="createGroup">
+      <form id="createGroup" class="d-none">
         <div class="mb-2">
-          <label for="groupName" class="form-label"
-            >Create New Group with Current Tabs</label
-          >
+          <label for="groupName" class="form-label">
+            Create New Group with Current Tabs
+          </label>
           <input
             class="form-control"
             type="text"
@@ -33,11 +34,15 @@
           </div>
         </div>
         <div>
-          <button type="submit" class="btn btn-primary">Add group</button>
+          <button type="submit" class="btn btn-primary" id="addBtn">
+            Add group
+          </button>
         </div>
       </form>
     </div>
+
     <div id="groups" class="p-3 text-center">No Groups</div>
+
     <script src="../scripts/constants.js"></script>
     <script src="./popup.js"></script>
   </body>
